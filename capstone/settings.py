@@ -103,6 +103,7 @@ ROOT_URLCONF = 'capstone.urls'
 WSGI_APPLICATION = 'capstone.wsgi.application'
 
 TEMPLATE_DIRS = (
+    "/home/jackson/django/capstone/template"
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.

@@ -27,3 +27,12 @@ class Shift(models.Model):
 	time_start = models.DateTimeField('Start Time')
 	time_end = models.DateTimeField('End Time')
 	deliverables = models.CharField(max_length=1000)
+
+	def __unicode__(self):
+		return str(self.shift_student) + " Start: "  + str(self.time_start) + " End: " + str(self.time_end)
+
+class Deliverable(models.Model):
+	deliverable_name = models.CharField(max_length=1000)
+
+	def __unicode__(self):
+		return self.deliverable_name

@@ -1,0 +1,9 @@
+{% if semester_list %}
+	<ul> 
+		{% for semester in semester_list %}
+			<li> {{semester.semester_name}} </li>
+		{% endfor %}
+	</ul>
+{% else %}
+	<p> No Semesters are available </p
+{% endif %}
