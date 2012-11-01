@@ -1,17 +1,14 @@
 from django.conf.urls import patterns, include, url
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'capstone.views.home', name='home'),
-    # url(r'^capstone/', include('capstone.foo.urls')),
-
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
+    url(r'^$', 'timeclock.views.index'),
+    url(r'^semester_(?P<semester_name>\w+)/?$', 'timeclock.views.project'),
     url(r'^admin/', include(admin.site.urls)),
 )
+
