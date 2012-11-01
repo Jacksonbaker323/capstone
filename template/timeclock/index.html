@@ -1,9 +1,25 @@
-{% if semester_list %}
-	<ul> 
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  </head>
+
+  <body>
+
+
+	{% if semester_list %}
+	<form>
+	<select name="URL" onchange="window.location.href=this.form.URL.options[this.form.URL.selectedIndex].value">
+			<option>Select a semester</option> 
 		{% for semester in semester_list %}
-			<li> {{semester.semester_name}} </li>
+			<option value="/semester_{{semester.semester_name}}"> {{semester.semester_name}} </option>
 		{% endfor %}
-	</ul>
+	</select>
+	</form>
+
+
 {% else %}
 	<p> No Semesters are available </p
 {% endif %}
+
+  </body>
+</html>
