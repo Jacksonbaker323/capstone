@@ -13,13 +13,12 @@
 		{% for semester in semester_list %}
 			<!--<option value="/semester_{{semester.semester_name}}"> -->
 			<!-- sets the url equal to the id of the semester that the person selected -->
-			<option value="/semester_{{semester.id}}">
+			<option value="/semester/{{semester.id}}">
 
 			{{semester.semester_name}} </option>
 		{% endfor %}
 	</select>
 	</form>
-
 
 {% else %}
 	<p> No Semesters are available </p

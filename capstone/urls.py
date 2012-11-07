@@ -8,7 +8,9 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^$', 'timeclock.views.index'),
-    url(r'^semester_(?P<semester_name>\w+)/?$', 'timeclock.views.project'),
+    url(r'^semester/(?P<semester_name>\d+)/$', 'timeclock.views.project'),
+    url(r'^project/(?P<project_name>\d+)/$', 'timeclock.views.student'),
+    #url(r'^semester/(?P<semester_name>\d+)/project/(?P<project_name>\d+)/$', 'timeclock.views.student'),
     url(r'^admin/', include(admin.site.urls)),
 )
 

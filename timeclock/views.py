@@ -12,10 +12,11 @@ def index(request):
 		return render(request, 'timeclock/index.html', context)
 
 def project(request, semester_name):
-		semester_list = Semester.objects.all()
-		#project_list = Project.objects.all()
-		#Get the projects from that semester and send them to the view
 		project_list = Project.objects.filter(semester=semester_name)
-		context = {'project_list' : project_list }
+		context = { 'project_list' : project_list }
 		return render(request, 'timeclock/project.html', context)
 
+def student(request, project_name):
+	student_list = Student.objects.filter(project=project_name)
+	context = { 'student_list' : student_list }
+	return render(request, 'timeclock/student.html', context)

@@ -6,18 +6,17 @@
   <body>
 
 
-	{% if project_list %}
+	{% if student_list %}
 	<form>
 	<select name="URL" onchange="window.location.href=this.form.URL.options[this.form.URL.selectedIndex].value">
-			<option>Select a project</option> 
-		{% for project in project_list %}
-			<option value="/project/{{project.id}}"> {{project}} </option>
+			<option>Select a student</option> 
+		{% for student in student_list %}
+			<option value="/student_{{student}}"> {{student}} </option>
 		{% endfor %}
 	</select>
 	</form>
-
 {% else %}
-	<p> No Projects are available </p
+	<p> No Students are available </p
 {% endif %}
 
   </body>
