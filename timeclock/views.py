@@ -20,3 +20,8 @@ def student(request, project_name):
 	student_list = Student.objects.filter(project=project_name)
 	context = { 'student_list' : student_list }
 	return render(request, 'timeclock/student.html', context)
+
+def entertime(request, student_id):
+	student = Student.objects.filter(pk=student_id)
+	context = { 'student' : student }
+	return render(request, 'timeclock/entertime.html', context)

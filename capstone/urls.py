@@ -10,7 +10,7 @@ urlpatterns = patterns('',
     url(r'^$', 'timeclock.views.index'),
     url(r'^semester/(?P<semester_name>\d+)/$', 'timeclock.views.project'),
     url(r'^project/(?P<project_name>\d+)/$', 'timeclock.views.student'),
-    #url(r'^semester/(?P<semester_name>\d+)/project/(?P<project_name>\d+)/$', 'timeclock.views.student'),
+    url(r'^student/(?P<student_id>\d+)/$', 'timeclock.views.entertime'),
     url(r'^admin/', include(admin.site.urls)),
 )
 

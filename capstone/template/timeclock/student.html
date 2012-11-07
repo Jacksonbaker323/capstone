@@ -11,7 +11,7 @@
 	<select name="URL" onchange="window.location.href=this.form.URL.options[this.form.URL.selectedIndex].value">
 			<option>Select a student</option> 
 		{% for student in student_list %}
-			<option value="/student_{{student}}"> {{student}} </option>
+			<option value="/student/{{student.id}}"> {{student}} </option>
 		{% endfor %}
 	</select>
 	</form>
