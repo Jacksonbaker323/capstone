@@ -11,10 +11,21 @@
 	<select name="URL" onchange="window.location.href=this.form.URL.options[this.form.URL.selectedIndex].value">
 			<option>Select a semester</option> 
 		{% for semester in semester_list %}
-			<option value="/semester_{{semester.semester_name}}"> {{semester.semester_name}} </option>
+			<!--<option value="/semester_{{semester.semester_name}}"> -->
+			<!-- sets the url equal to the id of the semester that the person selected -->
+			<option value="/semester_{{semester.id}}">
+
+			{{semester.semester_name}} </option>
 		{% endfor %}
 	</select>
 	</form>
+
+	{% for semester in semester_list %}
+	<ul>
+		<li> {{semester.id}} </li>
+	</ul>
+	{% endfor %}
+
 
 
 {% else %}

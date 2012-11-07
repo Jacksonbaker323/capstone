@@ -1,4 +1,11 @@
 #Django settings for capstone project.
+import os
+import django
+
+DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
+SITE_ROOT  = os.path.dirname(os.path.realpath(__file__))
+
+
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -103,7 +110,8 @@ ROOT_URLCONF = 'capstone.urls'
 WSGI_APPLICATION = 'capstone.wsgi.application'
 
 TEMPLATE_DIRS = (
-    "/home/jackson/django/capstone/template"
+    os.path.join(SITE_ROOT, 'template'),
+    "/Users/jackson/Desktop/capstone/template",
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
