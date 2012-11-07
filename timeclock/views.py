@@ -10,3 +10,9 @@ def index(request):
 		semester_list = Semester.objects.all()
 		context = {'semester_list' : semester_list }
 		return render(request, 'timeclock/index.html', context)
+
+def project(request, semester_name):
+		project_list = Project.objects.all()
+		context = {'project_list' : project_list }
+		return render(request, 'timeclock/project.html', context)
+
