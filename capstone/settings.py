@@ -111,7 +111,7 @@ WSGI_APPLICATION = 'capstone.wsgi.application'
 
 TEMPLATE_DIRS = (
     os.path.join(SITE_ROOT, 'template'),
-    "/Users/jackson/Desktop/capstone/template",
+    #"/Users/jackson/Desktop/capstone/template",
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
