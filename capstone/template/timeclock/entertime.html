@@ -7,23 +7,48 @@
 
 
 		{% for student_name in student %}
-			<h1> {{student_name}} </h1>
+			<h1>Hello, {{student_name}} !</h1>
+			<h4> Please enter your time below </h4>
 		{%endfor%}
 
-<p> Start time: </p>
-<p> End time: </p>
-<p> Deliverables: </p>
+<div> Start time: <input type="text" id="datepicker_start" /> <input type="text" class="timepicker-default input-small" id="timepicker_start" />
+<div> End time: <input type="text" id="datepicker_end" /> <input type="text" class="timepicker-default input-small" id="timepicker_end" /> </div>
+<div> Deliverables: </div>
+
+
 
 <!--<h1> List of Deliverables </h1>
 {% for deliverable in deliverables %}
 <p> {{deliverable}} </p>
 {%endfor%} -->
 
-
 {% else %}
 	<p> No students are available </p>
 {%endif %}
 
-
-
 {% endblock content %}
+
+{% block scripts %}
+
+<script>
+
+    $(function() {
+        $( "#datepicker_start" ).datepicker();
+ 				});
+
+    $(function() {
+    	$('#timepicker_start').timepicker();
+    });
+
+        $(function() {
+        $( "#datepicker_end" ).datepicker();
+ 				});
+
+    $(function() {
+    	$('#timepicker_end').timepicker();
+    });
+
+
+
+</script>
+	{% endblock scripts %}
