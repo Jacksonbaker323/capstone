@@ -1,10 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-  </head>
+{% extends "base.html" %}
 
-  <body>
 
+{% block content %}
 
 	{% if student_list %}
 	<form>
@@ -16,8 +13,7 @@
 	</select>
 	</form>
 {% else %}
-	<p> No Students are available </p
+	<p> No Students are available </p>
 {% endif %}
 
-  </body>
-</html>
+{% endblock content %}

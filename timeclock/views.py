@@ -23,5 +23,6 @@ def student(request, project_name):
 
 def entertime(request, student_id):
 	student = Student.objects.filter(pk=student_id)
-	context = { 'student' : student }
+	deliverables = Deliverable.objects.all()
+	context = { 'student' : student, 'deliverables' :deliverables }
 	return render(request, 'timeclock/entertime.html', context)

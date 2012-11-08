@@ -1,17 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-  </head>
-
-  <body>
-<p> {{student}} </p>
-<p> </p>
+{% extends "base.html" %}
 
 
+{% block content %}
+
+	{% if student %}
+
+
+		{% for student_name in student %}
+			<h1> {{student_name}} </h1>
+		{%endfor%}
 
 <p> Start time: </p>
 <p> End time: </p>
 <p> Deliverables: </p>
 
-  </body>
-</html>
+<!--<h1> List of Deliverables </h1>
+{% for deliverable in deliverables %}
+<p> {{deliverable}} </p>
+{%endfor%} -->
+
+
+{% else %}
+	<p> No students are available </p>
+{%endif %}
+
+
+
+{% endblock content %}

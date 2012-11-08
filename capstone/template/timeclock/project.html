@@ -1,9 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-  </head>
+{% extends "base.html" %}
 
-  <body>
+
+{% block content %}
 
 
 	{% if project_list %}
@@ -17,8 +15,7 @@
 	</form>
 
 {% else %}
-	<p> No Projects are available </p
+	<p> No Projects are available </p>
 {% endif %}
 
-  </body>
-</html>
+{% endblock content %}

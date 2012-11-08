@@ -13,7 +13,6 @@ class Project(models.Model):
 	project_name = models.CharField(max_length=200)
 
 	def __unicode__(self):
-		#return str(self.project_name) + " Semester: " + str(self.semester)
 		return self.project_name
 
 class Student(models.Model):
@@ -21,7 +20,6 @@ class Student(models.Model):
 	student_name = models.CharField(max_length=200)
 	
 	def __unicode__(self):
-		#return str(self.student_name) + " Project Name: " + str(self.project)
 		return self.student_name
 
 class Shift(models.Model):
