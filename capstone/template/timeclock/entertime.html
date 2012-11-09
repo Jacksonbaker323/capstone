@@ -9,14 +9,46 @@
 		{% for student_name in student %}
 			<h1>Hello, {{student_name}} !</h1>
 			<h4> Please enter your time below </h4>
-		{%endfor%}
+    	{%endfor%}
 
-<div> Start time: <input type="text" id="datepicker_start" /> <input type="text" class="timepicker-default input-small" id="timepicker_start" />
-<div> End time: <input type="text" id="datepicker_end" /> <input type="text" class="timepicker-default input-small" id="timepicker_end" /> </div>
-<div> Deliverables: </div>
+<div class="row-fluid">
 
+        <div class="span2"> Start date: <input type="text" id="datepicker_start" /> </div>
+        <div class="span2 offset1"> Start time: <input type="text" class="timepicker-default input-small" id="timepicker_start" /> </div>
+</div>
 
+<div class="row-fluid">
+ 
+        <div class="span2"> End date: <input type="text" id="datepicker_end" /> </div>
+        <div class="span2 offset1">Start time: <input type="text" class="timepicker-default input-small" id="timepicker_end" /> </div>
 
+</div>
+
+<div class="row-fluid"> 
+    
+    <div class="span2">
+        Deliverables: <input type="text" id="deliverables" /> 
+    </div>
+
+</div>
+
+<div>
+    <br/>
+    <button class="btn btn-primary" type="button"> Submit time </button>
+</div>
+
+<br/>
+<br/>
+<h3> Or ...</h3><h4> pick a date range to generate a report </h4>
+<br/>
+<div class="row-fluid">
+        <div class="span3"> Start date: <input type="text" id="report_datepicker_start" /> </div>
+        <div class="span3"> End date: <input type="text" id="report_datepicker_end" /> </div>
+</div>
+<div>
+    <br/>
+    <button class="btn btn-primary" type="button"> Generate Report </button>
+</div>
 <!--<h1> List of Deliverables </h1>
 {% for deliverable in deliverables %}
 <p> {{deliverable}} </p>
@@ -40,15 +72,21 @@
     	$('#timepicker_start').timepicker();
     });
 
-        $(function() {
+    $(function() {
         $( "#datepicker_end" ).datepicker();
- 				});
+                });
 
     $(function() {
     	$('#timepicker_end').timepicker();
     });
 
+    $(function() {
+        $( "#report_datepicker_start" ).datepicker();
+                });
 
+    $(function() {
+        $( "#report_datepicker_end" ).datepicker();
+                });
 
 </script>
 	{% endblock scripts %}
