@@ -26,15 +26,39 @@
 
 <div class="row-fluid"> 
     
-    <div class="span2">
-        Deliverables: <input type="text" id="deliverables" /> 
+    <div class="span2">    
+
+        Deliverables: <input type="text" data-provide="typeahead" data-mode="multiple" id="deliverables" data-source='[
+        {% for deliverable in deliverables %}
+        "{{deliverable}}"
+        {%if forloop.last%}
+        {%else%}
+        ,
+        {%endif%}
+        {%endfor%}
+        ]'> 
+
+
+        
+
+
+
+
+
+
+
+
+
+
+      <!--  Deliverables: <input type="text" data-provide="typeahead" id="deliverables" data-source='[{%for deliverable in deliverables %},"{{deliverable}}"{%endfor%}]' /> 
+       -->
     </div>
 
 </div>
 
 <div>
     <br/>
-    <button class="btn btn-primary" type="button"> Submit time </button>
+    <button class="btn btn-primary" type="button" onClick = 'submiturl()' ;> Submit time </button>
 </div>
 
 <br/>
@@ -47,7 +71,7 @@
 </div>
 <div>
     <br/>
-    <button class="btn btn-primary" type="button"> Generate Report </button>
+    <button class="btn btn-primary" type="button" onClick = 'reporturl()';> Generate Report </button>
 </div>
 <!--<h1> List of Deliverables </h1>
 {% for deliverable in deliverables %}
@@ -63,6 +87,30 @@
 {% block scripts %}
 
 <script>
+
+    function reporturl()
+    {
+        var startdate = document.getElementById('report_datepicker_start').value;
+        var enddate = document.getElementById('report_datepicker_end').value;
+        var url = 'http://127.0.0.1:8000/report/start/' + startdate + "/end/" + enddate;
+        window.open(url);
+    }
+
+    function submiturl()
+    {
+        var startdate = document.getElementById('datepicker_start').value;
+        var starttime = document.getElementById('timepicker_start').value;
+
+        var enddate = document.getElementById('datepicker_end').value;
+        var endtime = document.getElementById('timepicker_end').value;
+
+        var url = 'http://127.0.0.1:8000/submit/startdate/' + startdate + '/starttime/' + starttime + '/enddate/' + enddate + '/endtime/' + endtime;
+
+        window.open(url);
+        
+
+
+    }
 
     $(function() {
         $( "#datepicker_start" ).datepicker();
