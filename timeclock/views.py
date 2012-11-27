@@ -5,6 +5,8 @@ from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from timeclock.models import Semester, Project, Student, Shift, Deliverable
+import datetime
+
 
 def index(request):
 		semester_list = Semester.objects.all()
@@ -26,3 +28,50 @@ def entertime(request, student_id):
 	deliverables = Deliverable.objects.all()
 	context = { 'student' : student, 'deliverables' :deliverables }
 	return render(request, 'timeclock/entertime.html', context)
+
+
+def submittime(request):
+	
+
+##### STARTDATE DATETIME OBJECT 
+
+
+	#Check for the startdate to be not empty
+	if request.GET['startdate'] == "":
+		context = {'error' : "Please enter a start date" }
+		return render(request, 'timeclock/error.html', context)
+	else:
+		#if startdate has text in it convert it to a date object
+		startdate = request.GET['startdate']
+
+	if request.GET['starttime'] == "":
+		context = {'error' :"Please enter a start time"}
+		return render(request, 'timeclock/error.html', context)
+	else: 
+		#Build the time_start object to put in the database
+		starttime = request.GET['starttime']
+		start_string = startdate + " " + starttime
+		time_start = datetime.datetime.strptime(start_string, '%m/%d/%Y %I:%M %p')
+
+##### ENDDATE DATETIME OBJECT 
+
+
+		#Check for the enddate to be not empty
+	if request.GET['enddate'] == "":
+		context = {'error' : "Please enter a end date" }
+		return render(request, 'timeclock/error.html', context)
+	else:
+		#if enddate has text in it convert it to a date object
+		enddate = request.GET['enddate']
+
+	if request.GET['endtime'] == "":
+		context = {'error' :"Please enter a end time"}
+		return render(request, 'timeclock/error.html', context)
+	else: 
+		#Build the time_start object to put in the database
+		endtime = request.GET['endtime']
+		end_string = enddate + " " + endtime
+		time_end = datetime.datetime.strptime(end_string, '%m/%d/%Y %I:%M %p')
+
+	deliverables = request.GET['deliverables']
+	return HttpResponse("Start time: " + str(time_end) + " " + "End time: " +  str(time_start) + " " + str(deliverables))

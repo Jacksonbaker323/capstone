@@ -10,17 +10,17 @@
 			<h1>Hello, {{student_name}} !</h1>
 			<h4> Please enter your time below </h4>
     	{%endfor%}
-
+<form action="/submittime/" method="get" >
 <div class="row-fluid">
 
-        <div class="span2"> Start date: <input type="text" id="datepicker_start" /> </div>
-        <div class="span2 offset1"> Start time: <input type="text" class="timepicker-default input-small" id="timepicker_start" /> </div>
+        <div class="span2"> Start date: <input type="text" id="datepicker_start" name="startdate"/> </div>
+        <div class="span2 offset1"> Start time: <input type="text" class="timepicker-default input-small" id="timepicker_start" name="starttime" /> </div>
 </div>
 
 <div class="row-fluid">
  
-        <div class="span2"> End date: <input type="text" id="datepicker_end" /> </div>
-        <div class="span2 offset1">Start time: <input type="text" class="timepicker-default input-small" id="timepicker_end" /> </div>
+        <div class="span2"> End date: <input type="text" id="datepicker_end" name="enddate" /> </div>
+        <div class="span2 offset1">End time: <input type="text" class="timepicker-default input-small" id="timepicker_end" name="endtime" /> </div>
 
 </div>
 
@@ -28,7 +28,7 @@
     
     <div class="span2">    
 
-        Deliverables: <input type="text" data-provide="typeahead" data-mode="multiple" id="deliverables" data-source='[
+        Deliverables: <input type="text" name="deliverables" data-provide="typeahead" data-mode="multiple" id="deliverables" data-source='[
         {% for deliverable in deliverables %}
         "{{deliverable}}"
         {%if forloop.last%}
@@ -37,46 +37,31 @@
         {%endif%}
         {%endfor%}
         ]'> 
-
-
-        
-
-
-
-
-
-
-
-
-
-
-      <!--  Deliverables: <input type="text" data-provide="typeahead" id="deliverables" data-source='[{%for deliverable in deliverables %},"{{deliverable}}"{%endfor%}]' /> 
-       -->
     </div>
 
 </div>
 
 <div>
     <br/>
-    <button class="btn btn-primary" type="button" onClick = 'submiturl()' ;> Submit time </button>
+    <input class="btn btn-primary" type="submit" value="Submit">
+</form>
 </div>
 
 <br/>
 <br/>
 <h3> Or ...</h3><h4> pick a date range to generate a report </h4>
 <br/>
+<form>
 <div class="row-fluid">
         <div class="span3"> Start date: <input type="text" id="report_datepicker_start" /> </div>
         <div class="span3"> End date: <input type="text" id="report_datepicker_end" /> </div>
 </div>
 <div>
     <br/>
-    <button class="btn btn-primary" type="button" onClick = 'reporturl()';> Generate Report </button>
+    <input class="btn btn-primary" type="submit" value="Generate Report">
 </div>
-<!--<h1> List of Deliverables </h1>
-{% for deliverable in deliverables %}
-<p> {{deliverable}} </p>
-{%endfor%} -->
+</form>
+
 
 {% else %}
 	<p> No students are available </p>

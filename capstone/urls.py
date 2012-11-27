@@ -12,5 +12,6 @@ urlpatterns = patterns('',
     url(r'^project/(?P<project_name>\d+)/$', 'timeclock.views.student'),
     url(r'^student/(?P<student_id>\d+)/$', 'timeclock.views.entertime'),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^submittime/$', 'timeclock.views.submittime'),
 )
 
