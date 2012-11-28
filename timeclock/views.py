@@ -5,6 +5,8 @@ from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from timeclock.models import Semester, Project, Student, Shift, Deliverable
+from django.utils import timezone
+from django.utils import tzinfo
 import datetime
 
 
@@ -52,7 +54,7 @@ def submittime(request):
 		starttime = request.GET['starttime']
 		start_string = startdate + " " + starttime
 		submitted_time_start = datetime.datetime.strptime(start_string, '%m/%d/%Y %I:%M %p')
-
+		submitted_time_start = timezone.make_aware(submitted_time_start, timezone.get_default_timezone())
 ##### ENDDATE DATETIME OBJECT 
 
 
@@ -72,6 +74,8 @@ def submittime(request):
 		endtime = request.GET['endtime']
 		end_string = enddate + " " + endtime
 		submitted_time_end = datetime.datetime.strptime(end_string, '%m/%d/%Y %I:%M %p')
+		submitted_time_end = timezone.make_aware(submitted_time_end, timezone.get_default_timezone())
+
 
 	submitted_deliverables = request.GET['deliverables']
 	student_id = request.GET['student_id']
