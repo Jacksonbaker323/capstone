@@ -26,7 +26,7 @@ def student(request, project_name):
 def entertime(request, student_id):
 	student = Student.objects.filter(pk=student_id)
 	deliverables = Deliverable.objects.all()
-	context = { 'student' : student, 'deliverables' :deliverables }
+	context = { 'student' : student, 'deliverables' :deliverables, 'student_id' : student_id }
 	return render(request, 'timeclock/entertime.html', context)
 
 
@@ -51,7 +51,7 @@ def submittime(request):
 		#Build the time_start object to put in the database
 		starttime = request.GET['starttime']
 		start_string = startdate + " " + starttime
-		time_start = datetime.datetime.strptime(start_string, '%m/%d/%Y %I:%M %p')
+		submitted_time_start = datetime.datetime.strptime(start_string, '%m/%d/%Y %I:%M %p')
 
 ##### ENDDATE DATETIME OBJECT 
 
@@ -71,7 +71,14 @@ def submittime(request):
 		#Build the time_start object to put in the database
 		endtime = request.GET['endtime']
 		end_string = enddate + " " + endtime
-		time_end = datetime.datetime.strptime(end_string, '%m/%d/%Y %I:%M %p')
+		submitted_time_end = datetime.datetime.strptime(end_string, '%m/%d/%Y %I:%M %p')
 
-	deliverables = request.GET['deliverables']
-	return HttpResponse("Start time: " + str(time_end) + " " + "End time: " +  str(time_start) + " " + str(deliverables))
+	submitted_deliverables = request.GET['deliverables']
+	student_id = request.GET['student_id']
+	student_id_number = Student.objects.get(id=student_id)
+
+	newshift = Shift(shift_student=student_id_number, time_start=submitted_time_start, time_end=submitted_time_end, deliverables=submitted_deliverables)
+	newshift.save()
+	#return HttpResponse("Start time: " + str(submitted_time_end) + " " + "End time: " +  str(submitted_time_start) + " " + str(deliverables))
+	context = {'student_id':student_id}
+	return render(request, 'timeclock/success.html', context)
