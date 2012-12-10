@@ -73,56 +73,45 @@ def submittime(request):
 		end_string = enddate + " " + endtime
 		submitted_time_end = datetime.datetime.strptime(end_string, '%m/%d/%Y %I:%M %p')
 		submitted_time_end = timezone.make_aware(submitted_time_end, timezone.get_default_timezone())
+		submitted_total_time = submitted_time_end - submitted_time_start
+		submitted_total_time = float(submitted_total_time.total_seconds()/3600)
 
 
 	submitted_deliverables = request.GET['deliverables']
 	student_id = request.GET['student_id']
 	student_id_number = Student.objects.get(id=student_id)
 
-	newshift = Shift(shift_student=student_id_number, time_start=submitted_time_start, time_end=submitted_time_end, deliverables=submitted_deliverables)
+	newshift = Shift(shift_student=student_id_number, time_start=submitted_time_start, time_end=submitted_time_end, total_time=submitted_total_time,  deliverables=submitted_deliverables)
 	newshift.save()
-	#return HttpResponse("Start time: " + str(submitted_time_end) + " " + "End time: " +  str(submitted_time_start) + " " + str(deliverables))
 	context = {'student_id':student_id}
 	return render(request, 'timeclock/success.html', context)
 
 
 
 def reporting(request, semester_id):
+	end_date = datetime.date.today()
+	start_date = end_date - datetime.timedelta(days=7)
+	
 	semester = Semester.objects.filter(id=semester_id)
-	projects = Project.objects.filter(semester=semester)
-	
-	allstudents = []
-
-	studentset = projects[0].student_set.values()
-	for x in projects:
-		#allstudents.append(Student.objects.filter(project=x))
-		allstudents.append(x.student_set.values())
+	students = Student.objects.filter(semester=semester).order_by("project")
 
 
-	students = Student.objects.filter(project=projects)
+	shifts = Shift.objects.filter(time_start__gt=start_date)
 
-	start_date = datetime.date.today()
-	end_date = start_date - datetime.timedelta(days=21)
+
+
+
 	
 
-	#TODO: 
-	#Get all the student objects for the semester
-	#Get all the time/Tasks for the students in each project between the dates
 
 
+	#Get the number of projects in a semester
+	#Get the name of the project by id and then students in that project
+	#Put that info in an array
+	#Iterate through it in the HTML template
 
 
-	context = {'projects': projects, 'students': students, 'start_date': start_date, 'end_date': end_date, 'allstudents' : studentset }
+	context = {'students': students, 'start_date': start_date, 'end_date': end_date, 'shifts' : shifts}
 	return render(request, 'timeclock/report.html', context)
-
-
-
-
-
-
-
-
-
-
 
 

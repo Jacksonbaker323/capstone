@@ -1,37 +1,57 @@
 {% extends "base.html" %}
 
 {% block content %}
+
 Report generated with data
 
- From: <b>{{end_date}}</b> To: <b>{{start_date}}</b>
+ From: <b>{{start_date}}</b> To: <b>{{end_date}}</b>
+ <br/>
+ <br/>
 
 <table class="table">
-{% for project in projects %}
-<tr>
-	<td>
-	{{project}}
-</td>
+<th>
+	Project Name	
+</th>
+<th>
+	Student Name
+</th>
 
+<th>
+Start Time
+</th>
+<th>
+End Time
+</th>
 
-</tr>
-{%endfor%}
-</table>
-
-<table class="table">
-{% for x in allstudents %}
-<tr>
-	<td>
-	{{x}}
-
-</td>
-
+<th>
+Total Time (in hours)
+</th>
 
 </tr>
+
+{%for shift in shifts %}
+<tr>
+	<td>
+		{{shift.shift_student.project}}
+	</td>
+	<td>
+{{shift.shift_student}}
+	</td>
+
+<td>
+{{shift.time_start}}
+</td>
+<td>
+{{shift.time_end}}
+</td>
+
+<td>
+{{shift.total_time}}
+</td>
+
 {%endfor%}
+</tr>
+
 </table>
-
-
-{{allstudents}}
-
 
 {% endblock content %}

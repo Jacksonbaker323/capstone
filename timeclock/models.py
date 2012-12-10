@@ -18,7 +18,7 @@ class Project(models.Model):
 class Student(models.Model):
 	project = models.ForeignKey(Project)
 	student_name = models.CharField(max_length=200)
-	semeseter = models.ForeignKey(Semester)
+	semester = models.ForeignKey(Semester)
 	
 	def __unicode__(self):
 		return self.student_name
@@ -27,7 +27,9 @@ class Shift(models.Model):
 	shift_student = models.ForeignKey(Student)
 	time_start = models.DateTimeField('Start Time')
 	time_end = models.DateTimeField('End Time')
+	total_time = models.IntegerField('Total Time')
 	deliverables = models.CharField(max_length=1000)
+
 
 	def __unicode__(self):
 		return str(self.shift_student) + " Start: "  + str(self.time_start) + " End: " + str(self.time_end)
