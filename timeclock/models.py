@@ -18,6 +18,7 @@ class Project(models.Model):
 class Student(models.Model):
 	project = models.ForeignKey(Project)
 	student_name = models.CharField(max_length=200)
+	semeseter = models.ForeignKey(Semester)
 	
 	def __unicode__(self):
 		return self.student_name

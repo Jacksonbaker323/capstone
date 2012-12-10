@@ -56,8 +56,6 @@ def submittime(request):
 		submitted_time_start = datetime.datetime.strptime(start_string, '%m/%d/%Y %I:%M %p')
 		submitted_time_start = timezone.make_aware(submitted_time_start, timezone.get_default_timezone())
 ##### ENDDATE DATETIME OBJECT 
-
-
 		#Check for the enddate to be not empty
 	if request.GET['enddate'] == "":
 		context = {'error' : "Please enter a end date" }
@@ -86,3 +84,45 @@ def submittime(request):
 	#return HttpResponse("Start time: " + str(submitted_time_end) + " " + "End time: " +  str(submitted_time_start) + " " + str(deliverables))
 	context = {'student_id':student_id}
 	return render(request, 'timeclock/success.html', context)
+
+
+
+def reporting(request, semester_id):
+	semester = Semester.objects.filter(id=semester_id)
+	projects = Project.objects.filter(semester=semester)
+	
+	allstudents = []
+
+	studentset = projects[0].student_set.values()
+	for x in projects:
+		#allstudents.append(Student.objects.filter(project=x))
+		allstudents.append(x.student_set.values())
+
+
+	students = Student.objects.filter(project=projects)
+
+	start_date = datetime.date.today()
+	end_date = start_date - datetime.timedelta(days=21)
+	
+
+	#TODO: 
+	#Get all the student objects for the semester
+	#Get all the time/Tasks for the students in each project between the dates
+
+
+
+
+	context = {'projects': projects, 'students': students, 'start_date': start_date, 'end_date': end_date, 'allstudents' : studentset }
+	return render(request, 'timeclock/report.html', context)
+
+
+
+
+
+
+
+
+
+
+
+

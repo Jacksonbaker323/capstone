@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+Report generated with data
+
+ From: <b>{{end_date}}</b> To: <b>{{start_date}}</b>
+
+<table class="table">
+{% for project in projects %}
+<tr>
+	<td>
+	{{project}}
+</td>
+
+
+</tr>
+{%endfor%}
+</table>
+
+<table class="table">
+{% for x in allstudents %}
+<tr>
+	<td>
+	{{x}}
+
+</td>
+
+
+</tr>
+{%endfor%}
+</table>
+
+
+{{allstudents}}
+
+
+{% endblock content %}
