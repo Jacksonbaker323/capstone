@@ -9,49 +9,57 @@ Report generated with data
  <br/>
 
 <table class="table">
-<th>
-	Project Name	
-</th>
-<th>
-	Student Name
-</th>
-
-<th>
-Start Time
-</th>
-<th>
-End Time
-</th>
-
-<th>
-Total Time (in hours)
-</th>
-
+	<tr>
+		<th>Project Name</th><th>Average Hours</th><th>Deliverables</th>
+	</tr>
+{%for project_name in simple_report %}
+<tr>
+	<td>
+{{project_name}}
+	</td>
+	<td>
+{{hours}}
+	</td>
+	<td>
+		{{deliverables}}
+	</td>
 </tr>
+{%endfor%}
+</table>
 
+<table class="table">
+
+<tr>
+	<th>Project Name</th><th>Student Name</th><th>Start Time</th><th>End Time</th><th>Total Time (in hours)</th><th>Deliverables</th>
+</tr>
 {%for shift in shifts %}
 <tr>
 	<td>
 		{{shift.shift_student.project}}
 	</td>
 	<td>
-{{shift.shift_student}}
+		{{shift.shift_student}}
 	</td>
 
-<td>
-{{shift.time_start}}
-</td>
-<td>
-{{shift.time_end}}
-</td>
+	<td>
+		{{shift.time_start}}
+	</td>
+	<td>
+		{{shift.time_end}}
+	</td>
 
-<td>
-{{shift.total_time}}
-</td>
+	<td>
+		{{shift.total_time}}
+	</td>
 
-{%endfor%}
+	<td class="span4">
+		{{shift.deliverables}}
+	</td>
+
+		{%endfor%}
 </tr>
 
 </table>
+
 
 {% endblock content %}

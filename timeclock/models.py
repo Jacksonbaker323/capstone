@@ -24,6 +24,7 @@ class Student(models.Model):
 		return self.student_name
 
 class Shift(models.Model):
+	project = models.ForeignKey(Project)
 	shift_student = models.ForeignKey(Student)
 	time_start = models.DateTimeField('Start Time')
 	time_end = models.DateTimeField('End Time')
