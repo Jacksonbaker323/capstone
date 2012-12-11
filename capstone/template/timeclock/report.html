@@ -8,23 +8,27 @@ Report generated with data
  <br/>
  <br/>
 
+
+
 <table class="table">
 	<tr>
 		<th>Project Name</th><th>Average Hours</th><th>Deliverables</th>
 	</tr>
-{%for project_name in simple_report %}
+{%for project_name in simple_report%}
 <tr>
 	<td>
 {{project_name}}
 	</td>
+	{%endfor%}
+	{% for hour in hours%}
 	<td>
-{{hours}}
+{{hour}}
 	</td>
+	{%endfor%}
 	<td>
 		{{deliverables}}
 	</td>
 </tr>
-{%endfor%}
 </table>
 
 <table class="table">

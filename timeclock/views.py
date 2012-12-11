@@ -106,7 +106,12 @@ def reporting(request, semester_id):
 	#PUT IT IN AN ARRAY
 
 	simple_report = []
-	hours = Shift.objects.filter(project=1).aggregate(Avg('total_time'))
+	#hours = Shift.objects.filter(project=1).aggregate(Avg('total_time'))
+	hours = []
+	for x in Project.objects.filter(semester=semester_id):
+		z = Shift.objects.filter(project=x).aggregate(Avg('total_time'))
+		hours.append(z.get('total_time__avg'))
+		#hours.append(Shift.objects.filter(project=x).aggregate(Avg('total_time')))
 
 	for shift in shifts:
 		#Get the unique project names
@@ -115,7 +120,7 @@ def reporting(request, semester_id):
 		#For each project name total up the student time in that range
 		if y not in simple_report:
 			simple_report.append(y)
-		
+
 
 
 
