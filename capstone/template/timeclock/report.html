@@ -8,8 +8,46 @@ Report generated with data
  <br/>
  <br/>
 
+<table class="table span2">
+	<tr>
+		<th>Project Name</th>
+	</tr>
+{%for project_name in simple_report%}
+<tr>
+	<td>
+{{project_name}}
+	</td>
+	{%endfor%}
+</tr>
+</table>
+<table class="table span2">
+
+<tr><th>Average Hours </th></tr>
+{%for hour in hours%}
+<tr>
+	<td>
+{{hour}}
+	</td>
+	{%endfor%}
+</tr>
+</table>
+
+<table class="table span2">
+
+<tr><th>Deliverables</th></tr>
+{%for hour in hours%}
+<tr>
+	<td>
+{{hour}}
+	</td>
+	{%endfor%}
+</tr>
+</table>
 
 
+
+
+<!--
 <table class="table">
 	<tr>
 		<th>Project Name</th><th>Average Hours</th><th>Deliverables</th>
@@ -30,7 +68,7 @@ Report generated with data
 	</td>
 </tr>
 </table>
-
+-->
 <table class="table">
 
 <tr>
