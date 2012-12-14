@@ -13,6 +13,8 @@ urlpatterns = patterns('',
     url(r'^student/(?P<student_id>\d+)/$', 'timeclock.views.entertime'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^submittime/$', 'timeclock.views.submittime'),
-    url(r'^reporting/(?P<semester_id>\d+)/$', 'timeclock.views.reporting'),
+    url(r'^reporting/$', 'timeclock.views.reporting'),
+    url(r'^report/$', 'timeclock.views.reportingindex'),
+
 )
 

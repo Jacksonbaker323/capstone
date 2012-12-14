@@ -8,7 +8,8 @@ from timeclock.models import Semester, Project, Student, Shift, Deliverable
 from django.utils import timezone
 from django.utils import tzinfo
 import datetime
-from django.db.models import Avg
+from django.db.models import Avg, Count
+import string
 
 
 def index(request):
@@ -31,6 +32,12 @@ def entertime(request, student_id):
 	deliverables = Deliverable.objects.all()
 	context = { 'student' : student, 'deliverables' :deliverables, 'student_id' : student_id }
 	return render(request, 'timeclock/entertime.html', context)
+
+def reportingindex(request):
+	semester_list = Semester.objects.all()
+	context = {'semester_list' : semester_list}
+	return render(request, 'timeclock/reportingindex.html', context)
+
 
 
 def submittime(request):
@@ -84,35 +91,60 @@ def submittime(request):
 
 	project1 = Project.objects.get(student=student_id)
 
-
-	newshift = Shift(project=project1, shift_student=student_id_number, time_start=submitted_time_start, time_end=submitted_time_end, total_time=submitted_total_time,  deliverables=submitted_deliverables)
+	if submitted_deliverables == '':
+		newshift = Shift(project=project1, shift_student=student_id_number, time_start=submitted_time_start, time_end=submitted_time_end, total_time=submitted_total_time)
+	else:
+		newshift = Shift(project=project1, shift_student=student_id_number, time_start=submitted_time_start, time_end=submitted_time_end, total_time=submitted_total_time,  deliverables=submitted_deliverables)
 	newshift.save()
 	context = {'student_id':student_id}
 	return render(request, 'timeclock/success.html', context)
 
 
 
-def reporting(request, semester_id):
+def reporting(request):
+
+	semester_id = request.GET['semester_id']
+	
+	
+
+	try:
+		end_date = request.GET['enddate']
+		end_date = datetime.datetime.strptime(end_date, '%m/%d/%Y')
+	except:
+		end_date = datetime.datetime.today()
+
+
+	try:
+		start_date = request.GET['startdate']
+		start_date = datetime.datetime.strptime(start_date, '%m/%d/%Y')
+	except:
+		start_date = end_date - datetime.timedelta(days=7)
+
+
 	#Getting some information that I need to do things
-	end_date = datetime.date.today()
-	start_date = end_date - datetime.timedelta(days=7)
+	
+	#if start_date or end_date == "":
+	#	end_date = datetime.date.today()
+	#	start_date = end_date - datetime.timedelta(days=7)
 	semester = Semester.objects.filter(id=semester_id)
 	students = Student.objects.filter(semester=semester).order_by("project")
 #This is the object that is used to spit out all of the 
-	shifts = Shift.objects.filter(time_start__gt=start_date)
+	shifts = Shift.objects.filter(time_start__gte=start_date, time_start__lte=end_date + datetime.timedelta(days=1)).order_by('project')
 
-	#For project in projects (shifts)
-	#AGGREGATE
-	#PUT IT IN AN ARRAY
 
 	simple_report = []
-	#hours = Shift.objects.filter(project=1).aggregate(Avg('total_time'))
 	hours = []
-	for x in Project.objects.filter(semester=semester_id):
-		z = Shift.objects.filter(project=x).aggregate(Avg('total_time'))
-		hours.append(z.get('total_time__avg'))
-		#hours.append(Shift.objects.filter(project=x).aggregate(Avg('total_time')))
+	deliverables_list = []
 
+
+#Generates the aggregated table
+	for x in Project.objects.filter(semester=semester_id):
+		z = Shift.objects.filter(project=x, time_start__gte=start_date, time_start__lt=end_date + datetime.timedelta(days=1)).aggregate(Avg('total_time'))
+		hours.append(z.get('total_time__avg'))
+
+
+
+#Generates the detailed table
 	for shift in shifts:
 		#Get the unique project names
 		y = shift.shift_student.project.project_name
@@ -122,9 +154,17 @@ def reporting(request, semester_id):
 			simple_report.append(y)
 
 
+#	for x in Project.objects.filter(semester=semester_id).order_by("project_name"):
+#		z = Shift.objects.filter(project=x, time_start__gt=start_date).annotate(dcount=Count("project"))
+#		for shift in z:
+#			if shift.deliverables not in deliverables_list and shift.deliverables != string.whitespace:
+#				deliverables_list.append(shift.deliverables)
 
 
-	context = {'students': students, 'start_date': start_date, 'end_date': end_date, 'shifts' : shifts, 'simple_report' : simple_report, 'hours' : hours}
+
+
+
+	context = {'students': students, 'start_date': start_date, 'end_date': end_date, 'shifts' : shifts, 'simple_report' : simple_report, 'hours' : hours, 'deliverables_list' : deliverables_list, 'semester_id' : semester_id } 
 	return render(request, 'timeclock/report.html', context)
 
 
