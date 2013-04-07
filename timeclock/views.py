@@ -10,20 +10,33 @@ from django.utils import tzinfo
 import datetime
 from django.db.models import Avg, Count
 import string
-
+from django.shortcuts import redirect
 
 def index(request):
 		semester_list = Semester.objects.all()
-		context = {'semester_list' : semester_list }
+		if request.session.get('semester_id', None):
+			return redirect('/semester/' + request.session['semester_id']) #redirect the user to the appropriate semester page
+		#var 	=  'name in html file' : variable } #see below to add more variables to html
+		context = {'semester_list' : semester_list, 'test' : 'hello world!', 'page' : 'index'}
 		return render(request, 'timeclock/index.html', context)
 
+def selectsemester(request): #new view, attempts to delete the semester_id cookie and then loads index()
+		try:
+			del request.session['semester_id']
+		except KeyError:
+        		pass
+        	return redirect('/') #redirect user back to the homepage
+		
 def project(request, semester_name):
-		project_list = Project.objects.filter(semester=semester_name)
-		context = { 'project_list' : project_list }
+		semesterid = request.path.split("/")[2]
+		request.session['semester_id'] = semesterid
+		project_list = Project.objects.filter(semester=semester_name).order_by('project_name')
+		semestername = Semester.objects.filter(id=semester_name)
+		context = { 'project_list' : project_list, 'semester_name' : semestername[0].semester_name }
 		return render(request, 'timeclock/project.html', context)
 
 def student(request, project_name):
-	student_list = Student.objects.filter(project=project_name)
+	student_list = Student.objects.filter(project=project_name).order_by('student_name')
 	context = { 'student_list' : student_list }
 	return render(request, 'timeclock/student.html', context)
 
@@ -35,7 +48,7 @@ def entertime(request, student_id):
 
 def reportingindex(request):
 	semester_list = Semester.objects.all()
-	context = {'semester_list' : semester_list}
+	context = {'semester_list' : semester_list, 'page' : 'report'}
 	return render(request, 'timeclock/reportingindex.html', context)
 
 
