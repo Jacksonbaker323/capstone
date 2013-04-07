@@ -4,6 +4,8 @@ from django.db import models
 
 class Semester(models.Model):
 	semester_name = models.CharField(max_length=200)
+	#variable that matches DB table field = models.Type(parameters)
+	isCurrent = models.BooleanField()
 	
 	def __unicode__(self):
 		return self.semester_name

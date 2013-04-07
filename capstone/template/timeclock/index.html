@@ -1,15 +1,17 @@
 {% extends "base.html" %}
-
 {% block content %}
 
 	{% if semester_list %}
 	<form>
+	<!--- test variable --->
+	<p> {{test}} </p>
 	<select name="URL" onchange="window.location.href=this.form.URL.options[this.form.URL.selectedIndex].value">
-			<option>Select a semester</option> 
+			<option>Select a semester</option>
 		{% for semester in semester_list %}
+		    <!--- {{semester.id}} --->
 			<!--<option value="/semester_{{semester.semester_name}}"> -->
 			<!-- sets the url equal to the id of the semester that the person selected -->
-			<option value="/semester/{{semester.id}}">
+			<option value="/semester/{{semester.id}}" {% if semesterid = semester.id %} selected {% endif %}>
 
 			{{semester.semester_name}} </option>
 		{% endfor %}

@@ -5,9 +5,10 @@
 
 
 	{% if project_list %}
+	<p> You are currently viewing semester: {{semester_name}} </p>
 	<form>
 	<select name="URL" onchange="window.location.href=this.form.URL.options[this.form.URL.selectedIndex].value">
-			<option>Select a project</option> 
+			<option>Select a project</option>
 		{% for project in project_list %}
 			<option value="/project/{{project.id}}"> {{project}} </option>
 		{% endfor %}
@@ -17,5 +18,7 @@
 {% else %}
 	<p> No Projects are available </p>
 {% endif %}
+
+<a href="/selectsemester">Click here to choose a different semester</a>
 
 {% endblock content %}
