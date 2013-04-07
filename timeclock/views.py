@@ -17,7 +17,7 @@ def index(request):
 		if request.session.get('semester_id', None):
 			return redirect('/semester/' + request.session['semester_id']) #redirect the user to the appropriate semester page
 		#var 	=  'name in html file' : variable } #see below to add more variables to html
-		context = {'semester_list' : semester_list, 'test' : 'hello wazzup! Maybe this works?', 'page' : 'index'}
+		context = {'semester_list' : semester_list, 'test' : 'hello whatever! Maybe this works?', 'page' : 'index'}
 		return render(request, 'timeclock/index.html', context)
 
 def selectsemester(request): #new view, attempts to delete the semester_id cookie and then loads index()
