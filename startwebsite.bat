@@ -1,2 +1,2 @@
-C:\Python27\python.exe C:\Users\%username%\Documents\GitHub\capstone\manage.py runserver
+C:\Python27\python.exe manage.py runserver
 pause
