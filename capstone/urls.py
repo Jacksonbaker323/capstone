@@ -17,7 +17,11 @@ urlpatterns = patterns('',
     url(r'^submittime/$', 'timeclock.views.submittime'),
     url(r'^reporting/$', 'timeclock.views.reporting'),
     url(r'^report/$', 'timeclock.views.reportingindex'),
+	url(r'^pmo_report/(?P<semester_name>\d+)/$', 'timeclock.views.pmo_report'),
+	url(r'^pmo_report_select/$', 'timeclock.views.pmo_reportindex'),
+	url(r'^pmoselectsemester/$', 'timeclock.views.pmoselectsemester'),
 #    url(r'^testform/$', 'timeclock.views.testform'),
 
 )
+
 

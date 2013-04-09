@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<p>PMO Dashboard</p>
+	{% if project_list %}
+	<table class="table table-hover">
+  <thead><tr><th>Project Name</th><th>Semester Average (currently just a sum)</th><th>Last Week*</th></tr></thead>
+	<tbody>
+		{% for project in project_list %}
+			<tr>
+				<td><a href="/project/{{project.id}}">{{project.project_name}}</a></td>
+				<td>{{project.avghrs.total_time__sum}}</td>
+				<td>{{project.lstwkhrs}}</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+	</table>
+	<p>* indicates a field is not yet operational</p>
+{% else %}
+	<p> No projects are available </p>
+{% endif %}
+<a href="/pmoselectsemester">Click here to choose a different semester</a>
+{% endblock content %}

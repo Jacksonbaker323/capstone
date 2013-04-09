@@ -4,11 +4,11 @@ from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from timeclock.models import Semester, Project, Student, Shift, Deliverable
+from timeclock.models import Semester, Project, Student, Shift, Deliverable, ProjectStat
 from django.utils import timezone
 from django.utils import tzinfo
 import datetime
-from django.db.models import Avg, Count
+from django.db.models import Avg, Count, Sum
 import string
 from django.shortcuts import redirect
 
@@ -50,9 +50,37 @@ def reportingindex(request):
 	semester_list = Semester.objects.all()
 	context = {'semester_list' : semester_list, 'page' : 'report'}
 	return render(request, 'timeclock/reportingindex.html', context)
+	
+### BEGIN PMO DASHBOARD ###
 
+def pmo_reportindex(request): #Semester selection page for PMO dashboard
+	if request.session.get('semester_id', None):
+		return redirect('/pmo_report/' + request.session['semester_id'])
+	semester_list = Semester.objects.all()
+	context = {'semester_list' : semester_list, 'page' : 'report'}
+	return render(request, 'timeclock/pmoindex.html', context)
+	
+def pmo_report(request, semester_name): #PMO Dashboard report generation
+	request.session['semester_id'] = request.path.split("/")[2]
+	project_stats = [] #list to pass to context
+	project_list = Project.objects.filter(semester=semester_name)
+	for project in project_list:
+		avg = Shift.objects.filter(project_id=project.id).aggregate(Sum('total_time')) #What do I divide this by to obtain the actual average?
+		ltweeks = 0 #still need to make query for sum of last two weeks.
+		project_stats.append(ProjectStat(project.id,project.project_name,avg,ltweeks)) #Using a new class ProjectStat which holds project info and stats together
+	context = {'project_list' : project_stats, 'page' : 'pmo', 'page' : 'report'}
+	return render(request, 'timeclock/pmo_report.html', context)
 
+def pmoselectsemester(request): #Semester ID cookie delete that directs user back to pmo_reportindex, maybe in the future we can use a GET parameter to have one cookie deleting function that 
+								# can delete any cookie and have a switch for directing back to the appropriate page
+		try:
+			del request.session['semester_id']
+		except KeyError:
+        		pass
+        	return redirect('/pmo_report_select') #redirect user back to the homepage
 
+### END PMO DASHBOARD ###
+			
 def submittime(request):
 	
 

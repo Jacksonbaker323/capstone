@@ -17,6 +17,17 @@ class Project(models.Model):
 	def __unicode__(self):
 		return self.project_name
 
+class ProjectStat: #Class used by PM and PMO dashboard, allows for the combination of database and computed variables into one object for easier transport to the HTML view
+				   #This class is currently the only class that is not backed by an identical database structure.
+	def __init__(self,id,name,avg,lstwk):
+		self.id = id
+		self.project_name = name
+		self.avghrs = avg
+		self.lstwkhrs = lstwk
+		
+	def __str__(self):
+		return self.project_name
+		
 class Student(models.Model):
 	project = models.ForeignKey(Project)
 	student_name = models.CharField(max_length=200)
