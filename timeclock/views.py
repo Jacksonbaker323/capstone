@@ -19,13 +19,6 @@ def index(request):
 		#var 	=  'name in html file' : variable } #see below to add more variables to html
 		context = {'semester_list' : semester_list, 'test' : 'hello whatever! Maybe this works?', 'page' : 'index'}
 		return render(request, 'timeclock/index.html', context)
-
-def selectsemester(request): #new view, attempts to delete the semester_id cookie and then loads index()
-		try:
-			del request.session['semester_id']
-		except KeyError:
-        		pass
-        	return redirect('/') #redirect user back to the homepage
 		
 def project(request, semester_name):
 		semesterid = request.path.split("/")[2]
@@ -51,6 +44,16 @@ def reportingindex(request):
 	context = {'semester_list' : semester_list, 'page' : 'report'}
 	return render(request, 'timeclock/reportingindex.html', context)
 	
+def deleteSemesterCookie(request): #Reusable function, deletes semester cookie and then fowards user onto the location specified in the URL
+								   #eg http://localhost:8000/clearsemester/pmo_report_select/ would send the user to http://localhost:8000/pmo_report_select/ upon completion
+								   #not specifying a redirection location will send the user back to the homepage
+	redir = request.path.split("/")[2]
+	try:
+			del request.session['semester_id']
+	except KeyError:
+       		pass
+	return redirect('/' + redir)
+	
 ### BEGIN PMO DASHBOARD ###
 
 def pmo_reportindex(request): #Semester selection page for PMO dashboard
@@ -71,16 +74,8 @@ def pmo_report(request, semester_name): #PMO Dashboard report generation
 	context = {'project_list' : project_stats, 'page' : 'pmo', 'page' : 'report'}
 	return render(request, 'timeclock/pmo_report.html', context)
 
-def pmoselectsemester(request): #Semester ID cookie delete that directs user back to pmo_reportindex, maybe in the future we can use a GET parameter to have one cookie deleting function that 
-								# can delete any cookie and have a switch for directing back to the appropriate page
-		try:
-			del request.session['semester_id']
-		except KeyError:
-        		pass
-        	return redirect('/pmo_report_select') #redirect user back to the homepage
-
 ### END PMO DASHBOARD ###
-			
+	
 def submittime(request):
 	
 
