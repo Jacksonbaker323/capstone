@@ -19,7 +19,9 @@ urlpatterns = patterns('',
 	url(r'^clearsemester/', 'timeclock.views.deleteSemesterCookie'),
 	url(r'^pmo_report/(?P<semester_name>\d+)/$', 'timeclock.views.pmo_report'),
 	url(r'^pmo_report_select/$', 'timeclock.views.pmo_reportindex'),
-
+	url(r'^pm_report/(?P<project_name>\d+)/$', 'timeclock.views.pm_report'),
+	url(r'^pm_report_select/$', 'timeclock.views.pm_reportindex'), #This url is in here twice to allow for either pattern to be matched
+	url(r'^pm_report_select/(?P<semester_name>\d+)/$', 'timeclock.views.pm_reportindex'),
 )
 
 

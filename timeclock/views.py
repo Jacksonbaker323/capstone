@@ -75,6 +75,35 @@ def pmo_report(request, semester_name): #PMO Dashboard report generation
 	return render(request, 'timeclock/pmo_report.html', context)
 
 ### END PMO DASHBOARD ###
+
+### BEGIN PM DASHBOARD ###
+
+def pm_reportindex(request, semester_name=None): #Semester/Project selection page for PM dashboard
+	if request.session.get('semester_id', None):
+		if semester_name == None: #Semester cookie is set, but we're not looking at that semester yet so we redirect user to project selection for that semester
+			return redirect('/pm_report_select/' + str(request.session['semester_id']))
+	if semester_name:
+		request.session['semester_id'] = request.path.split("/")[2] #store the cookie in case it isn't already present
+		listobj = 'Project' #We're going to want our dropdown to say select a project
+		list = Project.objects.filter(semester=semester_name) #Get our list of projects in the selected semester
+	else:
+		listobj = 'Semester' #We're going to want our dropdown to say select a semester
+		list = Semester.objects.all() #Get our list of semesters
+	context = {'list' : list, 'listobj' : listobj, 'page' : 'report'}
+	return render(request, 'timeclock/pmindex.html', context)
+	
+def pm_report(request, project_name): #PMO Dashboard report generation
+	projectid = request.path.split("/")[2]
+	student_stats = [] #list to pass to context
+	student_list = Student.objects.filter(project=projectid)
+	for student in student_list:
+		avg = 0#Shift.objects.filter(project_id=project.id).aggregate(Sum('total_time')) #What do I divide this by to obtain the actual average?
+		ltweeks = 0 #still need to make query for sum of last two weeks.
+		student_stats.append(ProjectStat(student.id,student.student_name,avg,ltweeks)) #Using a new class ProjectStat which holds project info and stats together
+	context = {'project_list' : student_stats, 'page' : 'pmo', 'page' : 'report'}
+	return render(request, 'timeclock/pm_report.html', context)
+
+### END PM DASHBOARD ###
 	
 def submittime(request):
 	
