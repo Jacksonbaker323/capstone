@@ -48,12 +48,12 @@
             <ul class="nav" role="navigation">
 			  <li {% if page == "index" %} class="active" {% endif %}><a href="../..">Home</a></li>
               <li><a href="../../admin">Admin</a></li>
-              <li {% if page == "report" %} class="active" {% endif %}><a href="../../report">Report</a></li>
-			  <li class="dropdown">
+			  <li class="dropdown{% if page == "report" %} active{% endif %}">
                       <a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">Reports <b class="caret"></b></a>
                       <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="/pmo_report_select">PMO</a></li>
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="/pm_report_select">PM</a></li>
+						<li role="presentation" {% if report == "faculty" %} class="active" {% endif %}><a role="menuitem" tabindex="-1" href="../../report">Faculty</a></li>
+						<li role="presentation" {% if report == "pmo" %} class="active" {% endif %}><a role="menuitem" tabindex="-1" href="/pmo_report_select">PMO</a></li>
+						<li role="presentation" {% if report == "pm" %} class="active" {% endif %}><a role="menuitem" tabindex="-1" href="/pm_report_select">PM</a></li>
                       </ul>
               </li>
             </ul>

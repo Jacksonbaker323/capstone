@@ -3,18 +3,17 @@
 <p>PMO Dashboard</p>
 	{% if project_list %}
 	<table class="table table-hover">
-  <thead><tr><th>Project Name</th><th>Semester Average (currently just a sum)</th><th>Last Week*</th></tr></thead>
+  <thead><tr><th>Project Name</th><th>Semester Average</th><th>Last Week</th></tr></thead>
 	<tbody>
 		{% for project in project_list %}
 			<tr>
-				<td><a href="/pm_report/{{project.id}}">{{project.project_name}}</a></td>
+				<td><a href="/pm_report/{{project.id}}">{{project.name}}</a></td>
 				<td>{{project.avghrs.total_time__sum}}</td>
-				<td>{{project.lstwkhrs}}</td>
+				<td>{{project.lstwkhrs.total_time__sum}}</td>
 			</tr>
 		{% endfor %}
 	</tbody>
 	</table>
-	<p>* indicates a field is not yet operational</p>
 {% else %}
 	<p> No projects are available </p>
 {% endif %}

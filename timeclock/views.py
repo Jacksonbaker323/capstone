@@ -4,20 +4,23 @@ from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from timeclock.models import Semester, Project, Student, Shift, Deliverable, ProjectStat
+from timeclock.models import Semester, Project, Student, Shift, Deliverable, ReportStat
 from django.utils import timezone
 from django.utils import tzinfo
 import datetime
 from django.db.models import Avg, Count, Sum
 import string
 from django.shortcuts import redirect
+from datetime import date
+import datetime
+
 
 def index(request):
 		semester_list = Semester.objects.all()
 		if request.session.get('semester_id', None):
 			return redirect('/semester/' + request.session['semester_id']) #redirect the user to the appropriate semester page
 		#var 	=  'name in html file' : variable } #see below to add more variables to html
-		context = {'semester_list' : semester_list, 'test' : 'hello whatever! Maybe this works?', 'page' : 'index'}
+		context = {'semester_list' : semester_list, 'page' : 'index'}
 		return render(request, 'timeclock/index.html', context)
 		
 def project(request, semester_name):
@@ -41,7 +44,7 @@ def entertime(request, student_id):
 
 def reportingindex(request):
 	semester_list = Semester.objects.all()
-	context = {'semester_list' : semester_list, 'page' : 'report'}
+	context = {'semester_list' : semester_list, 'page' : 'report', 'report' : 'faculty'}
 	return render(request, 'timeclock/reportingindex.html', context)
 	
 def deleteSemesterCookie(request): #Reusable function, deletes semester cookie and then fowards user onto the location specified in the URL
@@ -50,7 +53,7 @@ def deleteSemesterCookie(request): #Reusable function, deletes semester cookie a
 	redir = request.path.split("/")[2]
 	try:
 			del request.session['semester_id']
-	except KeyError:
+	except KeyError: #Catch error from trying to delete non-existent cookie
        		pass
 	return redirect('/' + redir)
 	
@@ -60,18 +63,35 @@ def pmo_reportindex(request): #Semester selection page for PMO dashboard
 	if request.session.get('semester_id', None):
 		return redirect('/pmo_report/' + request.session['semester_id'])
 	semester_list = Semester.objects.all()
-	context = {'semester_list' : semester_list, 'page' : 'report'}
+	context = {'semester_list' : semester_list, 'page' : 'report', 'report' : 'pmo'}
 	return render(request, 'timeclock/pmoindex.html', context)
 	
 def pmo_report(request, semester_name): #PMO Dashboard report generation
 	request.session['semester_id'] = request.path.split("/")[2]
 	project_stats = [] #list to pass to context
 	project_list = Project.objects.filter(semester=semester_name)
+	curSemester = Semester.objects.filter(id=semester_name) #Get current semester so we can get start and end dates
+	sb = curSemester[0].start_date #start date of semester
+	se = curSemester[0].end_date #end date of semester
+	today = date.today()
+	if today < se: #if we haven't reached the end of the semester, use today as our boundary, otherwise we're using the semester end date
+		se = today
+	weeks = se.isocalendar()[1] - sb.isocalendar()[1] #compute the weeks between the two dates using the ISO calendar
 	for project in project_list:
 		avg = Shift.objects.filter(project_id=project.id).aggregate(Sum('total_time')) #What do I divide this by to obtain the actual average?
-		ltweeks = 0 #still need to make query for sum of last two weeks.
-		project_stats.append(ProjectStat(project.id,project.project_name,avg,ltweeks)) #Using a new class ProjectStat which holds project info and stats together
-	context = {'project_list' : project_stats, 'page' : 'pmo', 'page' : 'report'}
+		if avg['total_time__sum'] != None: #checking if there's actually numbers to average
+			avg['total_time__sum'] = round(float(avg['total_time__sum']) / weeks,4) #divide and convert into a 4 digit decimal number
+		ltwkstart = today - datetime.timedelta(days=7) #start a week ago
+		while ltwkstart.weekday() != 0: #0 is monday
+			ltwkstart = ltwkstart - datetime.timedelta(days=1) #count backwards from a week ago until we find monday
+		ltwkend = ltwkstart + datetime.timedelta(days=6)
+		ltweeks = Shift.objects.filter(project_id=project.id).filter(time_start__gte=ltwkstart).filter(time_end__lt=ltwkend).aggregate(Sum('total_time'))
+		#above line means:											time_start >= ltwkstart				time_end <= ltwkend
+		#NOTE: This is read as project_id=project.id AND time_start >= ltwkstart AND time_end <= ltwkend
+		#I know this is an awful place to put this, but to do an OR criteria, you would do .filter(A, B)
+		#for some reason, >= and <= are not acceptable to django's module.. despite being the scheme for python in general.
+		project_stats.append(ReportStat(project.id,project.project_name,avg,ltweeks)) #Using a new class ReportStat which holds project info and stats together
+	context = {'project_list' : project_stats, 'page' : 'pmo', 'page' : 'report', 'report' : 'pmo'}
 	return render(request, 'timeclock/pmo_report.html', context)
 
 ### END PMO DASHBOARD ###
@@ -89,18 +109,36 @@ def pm_reportindex(request, semester_name=None): #Semester/Project selection pag
 	else:
 		listobj = 'Semester' #We're going to want our dropdown to say select a semester
 		list = Semester.objects.all() #Get our list of semesters
-	context = {'list' : list, 'listobj' : listobj, 'page' : 'report'}
+	context = {'list' : list, 'listobj' : listobj, 'page' : 'report', 'report' : 'pm'}
 	return render(request, 'timeclock/pmindex.html', context)
 	
 def pm_report(request, project_name): #PMO Dashboard report generation
 	projectid = request.path.split("/")[2]
 	student_stats = [] #list to pass to context
 	student_list = Student.objects.filter(project=projectid)
+	curProject = Project.objects.filter(id=projectid) #Get current project object so we can get our semester id
+	curSemester = Semester.objects.filter(id=curProject[0].semester.id) #Get current semester so we can get start and end dates
+	sb = curSemester[0].start_date #start date of semester
+	se = curSemester[0].end_date #end date of semester
+	today = date.today()
+	if today < se: #if we haven't reached the end of the semester, use today as our boundary, otherwise we're using the semester end date
+		se = today
+	weeks = se.isocalendar()[1] - sb.isocalendar()[1] #compute the weeks between the two dates using the ISO calendar
 	for student in student_list:
-		avg = 0#Shift.objects.filter(project_id=project.id).aggregate(Sum('total_time')) #What do I divide this by to obtain the actual average?
-		ltweeks = 0 #still need to make query for sum of last two weeks.
-		student_stats.append(ProjectStat(student.id,student.student_name,avg,ltweeks)) #Using a new class ProjectStat which holds project info and stats together
-	context = {'project_list' : student_stats, 'page' : 'pmo', 'page' : 'report'}
+		avg = Shift.objects.filter(project_id=projectid).filter(shift_student=student.id).aggregate(Sum('total_time')) #gets raw total
+		if avg['total_time__sum'] != None: #checking if there's actually numbers to average
+			avg['total_time__sum'] = round(float(avg['total_time__sum']) / weeks,4) #divide and convert into a 4 digit decimal number
+		ltwkstart = today - datetime.timedelta(days=7) #start a week ago
+		while ltwkstart.weekday() != 0: #0 is monday
+			ltwkstart = ltwkstart - datetime.timedelta(days=1) #count backwards from a week ago until we find monday
+		ltwkend = ltwkstart + datetime.timedelta(days=6)
+		ltweeks = Shift.objects.filter(project_id=projectid).filter(shift_student=student.id).filter(time_start__gte=ltwkstart).filter(time_end__lt=ltwkend).aggregate(Sum('total_time'))
+		#above line means:																			time_start >= ltwkstart				time_end <= ltwkend
+		#NOTE: This is read as project_id=project.id AND shift_student=student.id AND time_start >= ltwkstart AND time_end <= ltwkend
+		#I know this is an awful place to put this, but to do an OR criteria, you would do .filter(A, B)
+		#for some reason, >= and <= are not acceptable to django's module.. despite being the scheme for python in general.
+		student_stats.append(ReportStat(student.id,student.student_name,avg,ltweeks)) #Using a new class ReportStat which holds project info and stats together
+	context = {'project_list' : student_stats, 'page' : 'pmo', 'page' : 'report', 'report' : 'pm'}
 	return render(request, 'timeclock/pm_report.html', context)
 
 ### END PM DASHBOARD ###
@@ -229,7 +267,7 @@ def reporting(request):
 
 
 
-	context = {'students': students, 'start_date': start_date, 'end_date': end_date, 'shifts' : shifts, 'simple_report' : simple_report, 'hours' : hours, 'deliverables_list' : deliverables_list, 'semester_id' : semester_id } 
+	context = {'students': students, 'start_date': start_date, 'end_date': end_date, 'shifts' : shifts, 'simple_report' : simple_report, 'hours' : hours, 'deliverables_list' : deliverables_list, 'semester_id' : semester_id, 'page' : 'report', 'report' : 'faculty' } 
 	return render(request, 'timeclock/report.html', context)
 
 

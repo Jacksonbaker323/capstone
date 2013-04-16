@@ -3,8 +3,6 @@
 
 	{% if semester_list %}
 	<form>
-	<!--- test variable --->
-	<p> {{test}} </p>
 	<select name="URL" onchange="window.location.href=this.form.URL.options[this.form.URL.selectedIndex].value">
 			<option>Select a semester</option>
 		{% for semester in semester_list %}

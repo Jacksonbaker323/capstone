@@ -5,7 +5,9 @@ from django.db import models
 class Semester(models.Model):
 	semester_name = models.CharField(max_length=200)
 	#variable that matches DB table field = models.Type(parameters)
-	isCurrent = models.BooleanField()
+	#For a list of models see https://docs.djangoproject.com/en/dev/ref/models/fields/
+	start_date = models.DateField()
+	end_date = models.DateField()
 	
 	def __unicode__(self):
 		return self.semester_name
@@ -17,11 +19,11 @@ class Project(models.Model):
 	def __unicode__(self):
 		return self.project_name
 
-class ProjectStat: #Class used by PM and PMO dashboard, allows for the combination of database and computed variables into one object for easier transport to the HTML view
+class ReportStat:  #Class used by PM and PMO dashboard, allows for the combination of database and computed variables into one object for easier transport to the HTML view
 				   #This class is currently the only class that is not backed by an identical database structure.
 	def __init__(self,id,name,avg,lstwk):
 		self.id = id
-		self.project_name = name
+		self.name = name
 		self.avghrs = avg
 		self.lstwkhrs = lstwk
 		
