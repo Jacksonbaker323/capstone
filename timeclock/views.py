@@ -39,7 +39,13 @@ def student(request, project_name):
 def entertime(request, student_id):
 	student = Student.objects.filter(pk=student_id)
 	deliverables = Deliverable.objects.all()
-	context = { 'student' : student, 'deliverables' :deliverables, 'student_id' : student_id }
+	
+	today = date.today()
+	startdate = today - datetime.timedelta(days=14)
+	ltweeks = Shift.objects.filter(shift_student=student_id).filter(time_start__gte=startdate).filter(time_end__lt=today)
+	#above line means:												 time_start >= startdate		  time_end <= today
+	
+	context = { 'student' : student, 'deliverables' :deliverables, 'student_id' : student_id, 'ltweeks' : ltweeks }
 	return render(request, 'timeclock/entertime.html', context)
 
 def reportingindex(request):
@@ -199,6 +205,7 @@ def submittime(request):
 	else:
 		newshift = Shift(project=project1, shift_student=student_id_number, time_start=submitted_time_start, time_end=submitted_time_end, total_time=submitted_total_time,  deliverables=submitted_deliverables)
 	newshift.save()
+	
 	context = {'student_id':student_id}
 	return render(request, 'timeclock/success.html', context)
 

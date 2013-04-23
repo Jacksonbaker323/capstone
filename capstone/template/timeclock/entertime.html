@@ -14,7 +14,7 @@
 <form action="/submittime/" method="get" >
 <div class="row-fluid">
 
-        <div class="span2"> Start date * : <input type="text" id="datepicker_start" name="startdate"/> </div>
+        <div class="span2"> Start date * : <input type="text" id="datepicker_start" name="startdate" required="true"/> </div>
         <div class="span2 offset1"> Start time * : <input type="text" class="timepicker-default input-small" id="timepicker_start" name="starttime" /> </div>
 </div>
 
@@ -61,21 +61,16 @@
 	<th>Date</th><th>Hours</th><th>Time</th><th>Deliverables</th>		<!-- Headings in Table -->
 </tr>
 <!--for shift in shifts %}			 for loop from views.py under entertime -->
-<tr>
-	<td>
-			Date data						<!-- Date input -->
-	</td>
-	<td>
-			Hours data						<!-- Hours input -->
-	</td>
-	<td>
-			Time data						<!-- Time input -->
-	</td>
-	<td>
-		Deliverables data							<!-- Deliverables input -->
-	</td>
-	
-</tr>
+<tbody>
+	{% for shift in ltweeks %}
+			<tr>
+				<td></td>
+				<td>{{shift.total_time}}</td>
+				<td></td>
+				<td>{{shift.deliverables}}</td>
+			</tr>
+	{% endfor %}
+</tbody>
 		
 </table>
 
