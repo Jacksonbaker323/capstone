@@ -4,7 +4,7 @@ from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from timeclock.models import Semester, Project, Student, Shift, Deliverable, ReportStat
+from timeclock.models import Semester, Project, Student, Shift, Deliverable, ReportStat, ShiftStat
 from django.utils import timezone
 from django.utils import tzinfo
 import datetime
@@ -187,7 +187,7 @@ def submittime(request):
 	else: 
 		#Build the time_start object to put in the database
 		endtime = request.GET['endtime']
-		end_string = enddate + " " + endtime
+		end_string = startdate + " " + endtime
 		submitted_time_end = datetime.datetime.strptime(end_string, '%m/%d/%Y %I:%M %p')
 		submitted_time_end = timezone.make_aware(submitted_time_end, timezone.get_default_timezone())
 		submitted_total_time = submitted_time_end - submitted_time_start

@@ -30,6 +30,13 @@ class ReportStat:  #Class used by PM and PMO dashboard, allows for the combinati
 	def __str__(self):
 		return self.project_name
 		
+class ShiftStat:
+
+	def __init__(self):
+		pass
+	
+	
+		
 class Student(models.Model):
 	project = models.ForeignKey(Project)
 	student_name = models.CharField(max_length=200)
