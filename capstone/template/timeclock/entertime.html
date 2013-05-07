@@ -15,14 +15,8 @@
 <div class="row-fluid">
 
         <div class="span2"> Date * : <input type="text" id="datepicker_start" name="startdate" required="true"/> </div>
-        <div class="span2 offset1"> Start time * : <input type="text" class="timepicker-default input-small" id="timepicker_start" name="starttime" /> </div>
+        <div class="span2 offset1"> Start time * : <input type="text" class="timepicker-default input-small" id="timepicker_start" name="starttime" required="true"/> </div>
 </div>
-
-<div class="row-fluid">
-        <div class="span2 offset1">End time * : <input type="text" class="timepicker-default input-small" id="timepicker_end" name="endtime" /> </div>
-
-</div>
-
 <div class="row-fluid"> 
     
     <div class="span2">    
@@ -40,8 +34,10 @@
             <input type="text" name="student_id"  value={{student_id}}>
         </div>
     </div>
-
+<div class="span2 offset1">End time * : <input type="text" class="timepicker-default input-small" id="timepicker_end" name="endtime" required="true"/> </div>
 </div>
+
+
 
 <div>
     <br/>
@@ -138,7 +134,7 @@
                 });
 
     $(function() {
-    	$('#timepicker_end').timepicker();
+    	$('#timepicker_end').timepicker({defaultTime: 'current'});
     });
 
     $(function() {

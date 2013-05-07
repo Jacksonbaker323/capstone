@@ -157,7 +157,7 @@ def submittime(request):
 
 	#Check for the startdate to be not empty
 	if request.GET['startdate'] == "":
-		context = {'error' : "Please enter a start date" }
+		context = {'error' : "Please enter a date" }
 		return render(request, 'timeclock/error.html', context)
 	else:
 		#if startdate has text in it convert it to a date object
@@ -174,17 +174,17 @@ def submittime(request):
 		submitted_time_start = timezone.make_aware(submitted_time_start, timezone.get_default_timezone())
 ##### ENDDATE DATETIME OBJECT 
 		#Check for the enddate to be not empty
-	if request.GET['enddate'] == "":
-		context = {'error' : "Please enter a end date" }
-		return render(request, 'timeclock/error.html', context)
-	else:
+	#if request.GET['enddate'] == "":
+		#context = {'error' : "Please enter a end date" }
+		#return render(request, 'timeclock/error.html', context)
+	#else:
 		#if enddate has text in it convert it to a date object
-		enddate = request.GET['enddate']
+		#enddate = request.GET['enddate']
 
-	if request.GET['endtime'] == "":
-		context = {'error' :"Please enter a end time"}
-		return render(request, 'timeclock/error.html', context)
-	else: 
+	#if request.GET['endtime'] == "":
+		#context = {'error' :"Please enter a end time"}
+		#return render(request, 'timeclock/error.html', context)
+	#else: 
 		#Build the time_start object to put in the database
 		endtime = request.GET['endtime']
 		end_string = startdate + " " + endtime
