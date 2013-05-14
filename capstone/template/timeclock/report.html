@@ -4,7 +4,7 @@
 
 <h2> Select a different date range </h2>
 
-<form action="/reporting/" method="get" >
+<form action="/reporting/{{semester.id}}/" method="get" >
 <div class="row-fluid">
 
         <div class="span2"> Start date * : <input type="text" id="datepicker_start" name="startdate"/> </div>
@@ -20,7 +20,8 @@
 <input type="hidden" id="semester_id" name="semester_id" value={{semester_id}}>
 <input class="btn btn-primary" type="submit" value="Submit">
 </form>
-
+<p> You are currently viewing semester: {{semester.semester_name}} </p>
+<a href="/clearsemester/report">Click here to choose a different semester</a><br><br>
 Report generated with data
 
  From: <b>{{start_date}}</b> To: <b>{{end_date}}</b>

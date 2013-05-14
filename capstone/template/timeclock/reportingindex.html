@@ -15,17 +15,18 @@
 		{% endfor %}
 	</select>
 	</form> -->
-	<form action="/reporting/" method="get">
-		<select name="semester_id">
-			<option> Select a semester </option>
-			{% for semester in semester_list %}
-			<option value="{{semester.id}}"> 
-				{{semester.semester_name}}
-			</option>
-			{% endfor %}
-		</select>
-		<br/>
-		<input class="btn btn-primary" type="submit" value="Submit">
+<form>
+	<select name="URL" onchange="window.location.href=this.form.URL.options[this.form.URL.selectedIndex].value">
+			<option>Select a semester</option>
+		{% for semester in semester_list %}
+		    <!--- {{semester.id}} --->
+			<!--<option value="/semester_{{semester.semester_name}}"> -->
+			<!-- sets the url equal to the id of the semester that the person selected -->
+			<option value="/reporting/{{semester.id}}" {% if semesterid = semester.id %} selected {% endif %}>
+
+			{{semester.semester_name}} </option>
+		{% endfor %}
+	</select>
 	</form>
 
 

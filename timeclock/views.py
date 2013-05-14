@@ -50,6 +50,8 @@ def entertime(request, student_id):
 
 def reportingindex(request):
 	semester_list = Semester.objects.all()
+	if request.session.get('semester_id', None):
+			return redirect('/reporting/' + request.session['semester_id']) #redirect the user to the appropriate semester page
 	context = {'semester_list' : semester_list, 'page' : 'report', 'report' : 'faculty'}
 	return render(request, 'timeclock/reportingindex.html', context)
 	
@@ -207,28 +209,40 @@ def submittime(request):
 	newshift.save()
 	
 	context = {'student_id':student_id}
+	#return redirect('/student/' + str(student_id)) #redirect the user to the appropriate semester page
 	return render(request, 'timeclock/success.html', context)
 
 
 
-def reporting(request):
-
-	semester_id = request.GET['semester_id']
+def reporting(request, semester_name = 0):
 	
-	
-
+	if semester_name == 0:
+		today = date.today()
+		currentSemester = Semester.objects.filter(start_date__lt=today).filter(end_date__gte=today)
+		try:
+			semester_name = currentSemester[0].id
+		except: #Today doesn't fall into a semester, take the newest semester instead
+			semesterList = Semester.objects.all('-id')
+			semester_name = semesterList[0].id
+	else:
+		request.session['semester_id'] = semester_name
+	semester_id = semester_name		
+	semester = Semester.objects.filter(id=semester_id)
+	semester = semester[0]
 	try:
 		end_date = request.GET['enddate']
 		end_date = datetime.datetime.strptime(end_date, '%m/%d/%Y')
 	except:
-		end_date = datetime.datetime.today()
+		#end_date = datetime.datetime.today()
+		end_date = semester.end_date
 
 
 	try:
 		start_date = request.GET['startdate']
 		start_date = datetime.datetime.strptime(start_date, '%m/%d/%Y')
 	except:
-		start_date = end_date - datetime.timedelta(days=7)
+		#start_date = end_date - datetime.timedelta(days=7)
+		start_date = semester.start_date
 
 
 	#Getting some information that I need to do things
@@ -236,8 +250,8 @@ def reporting(request):
 	#if start_date or end_date == "":
 	#	end_date = datetime.date.today()
 	#	start_date = end_date - datetime.timedelta(days=7)
-	semester = Semester.objects.filter(id=semester_id)
-	students = Student.objects.filter(semester=semester).order_by("project")
+	sem = Semester.objects.filter(id=semester_id)
+	students = Student.objects.filter(semester=sem).order_by("project")
 #This is the object that is used to spit out all of the 
 	shifts = Shift.objects.filter(time_start__gte=start_date, time_start__lte=end_date + datetime.timedelta(days=1)).order_by('project')
 
@@ -274,7 +288,7 @@ def reporting(request):
 
 
 
-	context = {'students': students, 'start_date': start_date, 'end_date': end_date, 'shifts' : shifts, 'simple_report' : simple_report, 'hours' : hours, 'deliverables_list' : deliverables_list, 'semester_id' : semester_id, 'page' : 'report', 'report' : 'faculty' } 
+	context = {'students': students, 'start_date': start_date, 'end_date': end_date, 'shifts' : shifts, 'simple_report' : simple_report, 'hours' : hours, 'deliverables_list' : deliverables_list, 'semester_id' : semester_id, 'page' : 'report', 'report' : 'faculty' , 'semester' : semester} 
 	return render(request, 'timeclock/report.html', context)
 
 
