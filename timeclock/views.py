@@ -84,11 +84,27 @@ def pmo_report(request, semester_name): #PMO Dashboard report generation
 	today = date.today()
 	if today < se: #if we haven't reached the end of the semester, use today as our boundary, otherwise we're using the semester end date
 		se = today
-	weeks = se.isocalendar()[1] - sb.isocalendar()[1] #compute the weeks between the two dates using the ISO calendar
+	## BEGIN WEEK COUNT ##	
+	weekcnt = 0
+	weeks = []
+	dt = sb
+	while dt <= se:
+		week = [0] * 2
+		week[0] = dt
+		week[1] = dt + datetime.timedelta(days=7)
+		weeks.append(week)
+		dt = dt + datetime.timedelta(days=7)
+	for week in weeks:
+		if len(Shift.objects.filter(time_start__gte=week[0]).filter(time_end__lt=week[1])) > 0: #This week has at least one shift in it
+			weekcnt += 1
+	if weekcnt == 0:
+		weekcnt = 1 #To prevent divide by zero
+	## END WEEK COUNT ##
+	#weeks = se.isocalendar()[1] - sb.isocalendar()[1] #compute the weeks between the two dates using the ISO calendar
 	for project in project_list:
 		avg = Shift.objects.filter(project_id=project.id).aggregate(Sum('total_time')) #What do I divide this by to obtain the actual average?
 		if avg['total_time__sum'] != None: #checking if there's actually numbers to average
-			avg['total_time__sum'] = round(float(avg['total_time__sum']) / weeks,4) #divide and convert into a 4 digit decimal number
+			avg['total_time__sum'] = round(float(avg['total_time__sum']) / weekcnt,4) #divide and convert into a 4 digit decimal number
 		ltwkstart = today - datetime.timedelta(days=7) #start a week ago
 		while ltwkstart.weekday() != 0: #0 is monday
 			ltwkstart = ltwkstart - datetime.timedelta(days=1) #count backwards from a week ago until we find monday
@@ -131,11 +147,27 @@ def pm_report(request, project_name): #PMO Dashboard report generation
 	today = date.today()
 	if today < se: #if we haven't reached the end of the semester, use today as our boundary, otherwise we're using the semester end date
 		se = today
-	weeks = se.isocalendar()[1] - sb.isocalendar()[1] #compute the weeks between the two dates using the ISO calendar
+	## BEGIN WEEK COUNT ##	
+	weekcnt = 0
+	weeks = []
+	dt = sb
+	while dt <= se:
+		week = [0] * 2
+		week[0] = dt
+		week[1] = dt + datetime.timedelta(days=7)
+		weeks.append(week)
+		dt = dt + datetime.timedelta(days=7)
+	for week in weeks:
+		if len(Shift.objects.filter(project_id=projectid).filter(time_start__gte=week[0]).filter(time_end__lt=week[1])) > 0: #This week has at least one shift in it
+			weekcnt += 1
+	if weekcnt == 0:
+		weekcnt = 1 #To prevent divide by zero
+	## END WEEK COUNT ##
+	#weeks = se.isocalendar()[1] - sb.isocalendar()[1] #compute the weeks between the two dates using the ISO calendar
 	for student in student_list:
 		avg = Shift.objects.filter(project_id=projectid).filter(shift_student=student.id).aggregate(Sum('total_time')) #gets raw total
 		if avg['total_time__sum'] != None: #checking if there's actually numbers to average
-			avg['total_time__sum'] = round(float(avg['total_time__sum']) / weeks,4) #divide and convert into a 4 digit decimal number
+			avg['total_time__sum'] = round(float(avg['total_time__sum']) / weekcnt,4) #divide and convert into a 4 digit decimal number
 		ltwkstart = today - datetime.timedelta(days=7) #start a week ago
 		while ltwkstart.weekday() != 0: #0 is monday
 			ltwkstart = ltwkstart - datetime.timedelta(days=1) #count backwards from a week ago until we find monday
