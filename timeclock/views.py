@@ -11,7 +11,7 @@ import datetime
 from django.db.models import Avg, Count, Sum
 import string
 from django.shortcuts import redirect
-from datetime import date
+from datetime import date, datetime
 import datetime
 
 
@@ -38,14 +38,23 @@ def student(request, project_name):
 
 def entertime(request, student_id):
 	student = Student.objects.filter(pk=student_id)
-	deliverables = Deliverable.objects.all()
-	
-	today = date.today()
+	shift_list = []
+	today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 	startdate = today - datetime.timedelta(days=14)
-	ltweeks = Shift.objects.filter(shift_student=student_id).filter(time_start__gte=startdate).filter(time_end__lt=today)
-	#above line means:												 time_start >= startdate		  time_end <= today
+	today = today + datetime.timedelta(days=1)
+	print(str(today))
+	shifts =  Shift.objects.filter(shift_student=student_id).filter(time_start__gte=startdate).filter(time_end__lt=today).order_by("-time_start")
 	
-	context = { 'student' : student, 'deliverables' :deliverables, 'student_id' : student_id, 'ltweeks' : ltweeks }
+	for shift in shifts:
+		shiftDate = shift.time_start.date()
+		shiftStart = shift.time_start.time()
+		shiftEnd = shift.time_end.time()
+		hours = shift.total_time
+		deliverables = shift.deliverables
+		shift_list.append(ShiftStat(shiftDate,hours,shiftStart,shiftEnd,deliverables))
+	#shift_list populated
+	deliverables = Deliverable.objects.all()
+	context = { 'student' : student, 'deliverables' :deliverables, 'student_id' : student_id, 'shift_list' : shift_list }
 	return render(request, 'timeclock/entertime.html', context)
 
 def reportingindex(request):

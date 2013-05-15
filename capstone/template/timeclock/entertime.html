@@ -56,11 +56,11 @@
 </tr>
 <!--for shift in shifts %}			 for loop from views.py under entertime -->
 <tbody>
-	{% for shift in ltweeks %}
+	{% for shift in shift_list %}
 			<tr>
-				<td></td>
-				<td>{{shift.total_time}}</td>
-				<td></td>
+				<td>{{shift.shiftDate}}</td>
+				<td>{{shift.hours}}</td>
+				<td>{{shift.stTime}} - {{shift.edTime}}</td>
 				<td>{{shift.deliverables}}</td>
 			</tr>
 	{% endfor %}
