@@ -214,7 +214,7 @@ def submittime(request):
 		starttime = request.GET['starttime']
 		start_string = startdate + " " + starttime
 		submitted_time_start = datetime.datetime.strptime(start_string, '%m/%d/%Y %I:%M %p')
-		submitted_time_start = timezone.make_aware(submitted_time_start, timezone.get_default_timezone())
+		#submitted_time_start = timezone.make_aware(submitted_time_start, timezone.get_default_timezone())
 ##### ENDDATE DATETIME OBJECT 
 		#Check for the enddate to be not empty
 	#if request.GET['enddate'] == "":
@@ -232,7 +232,7 @@ def submittime(request):
 		endtime = request.GET['endtime']
 		end_string = startdate + " " + endtime
 		submitted_time_end = datetime.datetime.strptime(end_string, '%m/%d/%Y %I:%M %p')
-		submitted_time_end = timezone.make_aware(submitted_time_end, timezone.get_default_timezone())
+		#submitted_time_end = timezone.make_aware(submitted_time_end, timezone.get_default_timezone())
 		submitted_total_time = submitted_time_end - submitted_time_start
 		submitted_total_time = float(submitted_total_time.total_seconds()/3600)
 
@@ -250,8 +250,8 @@ def submittime(request):
 	newshift.save()
 	
 	context = {'student_id':student_id}
-	#return redirect('/student/' + str(student_id)) #redirect the user to the appropriate semester page
-	return render(request, 'timeclock/success.html', context)
+	return redirect('/student/' + str(student_id)) #redirect the user to the appropriate semester page
+	#return render(request, 'timeclock/success.html', context)
 
 
 
@@ -263,7 +263,7 @@ def reporting(request, semester_name = 0):
 		try:
 			semester_name = currentSemester[0].id
 		except: #Today doesn't fall into a semester, take the newest semester instead
-			semesterList = Semester.objects.all('-id')
+			semesterList = Semester.objects.all.order_by('-id')
 			semester_name = semesterList[0].id
 	else:
 		request.session['semester_id'] = semester_name
