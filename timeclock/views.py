@@ -329,7 +329,11 @@ def reporting(request, semester_name = 0):
 #Generates the aggregated table
 	for x in Project.objects.filter(semester=semester_id):
 		z = Shift.objects.filter(project=x, time_start__gte=start_date, time_start__lt=end_date + datetime.timedelta(days=1)).aggregate(Avg('total_time'))
-		hours.append(round(z.get('total_time__avg'),4))
+		if z.get('total_time__avg') != None:
+			roundedHours = round(z.get('total_time__avg'),4)
+		else:
+			roundedHours = z.get('total_time__avg')
+		hours.append(roundedHours)
 
 #Generates the detailed table
 	for shift in shifts:
