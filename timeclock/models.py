@@ -55,7 +55,7 @@ class Shift(models.Model):
 	shift_student = models.ForeignKey(Student)
 	time_start = models.DateTimeField('Start Time')
 	time_end = models.DateTimeField('End Time')
-	total_time = models.IntegerField('Total Time')
+	total_time = models.FloatField('Total Time')
 	deliverables = models.CharField(max_length=1000)
 
 

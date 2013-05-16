@@ -47,7 +47,7 @@ def entertime(request, student_id):
 		shiftDate = shift.time_start.date()
 		shiftStart = shift.time_start.time()
 		shiftEnd = shift.time_end.time()
-		hours = shift.total_time
+		hours = float(shift.total_time)
 		deliverables = shift.deliverables
 		shiftID = shift.id
 		shift_list.append(ShiftStat(shiftDate,hours,shiftStart,shiftEnd,deliverables,shiftID))
