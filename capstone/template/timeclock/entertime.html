@@ -7,7 +7,7 @@
 
 
 		{% for student_name in student %}
-			<h1>Hello, {{student_name}} !</h1>
+			<h1>Hello, {{student_name}}!</h1>
 			<h4> Please enter your time below </h4>
             <h5> (* = Required) </h5>
     	{%endfor%}
@@ -49,7 +49,7 @@
 <table class="table table-hover">
 
 <tr>
-	<th>Date</th><th>Hours</th><th>Time</th><th>Deliverables</th>		<!-- Headings in Table -->
+	<th>Date</th><th>Hours</th><th>Time</th><th>Deliverables</th><th>Edit</th>		<!-- Headings in Table -->
 </tr>
 <!--for shift in shifts %}			 for loop from views.py under entertime -->
 <tbody>
@@ -59,6 +59,7 @@
 				<td>{{shift.hours}}</td>
 				<td>{{shift.stTime}} - {{shift.edTime}}</td>
 				<td>{{shift.deliverables}}</td>
+				<td><a href="/editshift/{{shift.shiftID}}" data-target="#myModal" data-toggle="modal">Edit</a></td>
 			</tr>
 	{% endfor %}
 </tbody>
@@ -68,6 +69,20 @@
 <!-- URL for report page-->
 
 <a href="/report/">View All</a>
+
+<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+    <h3 id="myModalLabel">Modify Shift</h3>
+  </div>
+  <div class="modal-body">
+	<p>Loading...</p>
+	</div>
+	<div class="modal-footer">
+	</div>
+  </div>
+<!--- Modal --->
 
 <!-- Individual reporting interface. Commented out, determined that it was not needed. 
 <h3> Or ...</h3><h4> pick a date range to generate a report </h4>

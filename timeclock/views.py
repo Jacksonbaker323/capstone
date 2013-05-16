@@ -19,7 +19,6 @@ def index(request):
 		semester_list = Semester.objects.all()
 		if request.session.get('semester_id', None):
 			return redirect('/semester/' + request.session['semester_id']) #redirect the user to the appropriate semester page
-		#var 	=  'name in html file' : variable } #see below to add more variables to html
 		context = {'semester_list' : semester_list, 'page' : 'index'}
 		return render(request, 'timeclock/index.html', context)
 		
@@ -42,7 +41,6 @@ def entertime(request, student_id):
 	today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 	startdate = today - datetime.timedelta(days=14)
 	today = today + datetime.timedelta(days=1)
-	print(str(today))
 	shifts =  Shift.objects.filter(shift_student=student_id).filter(time_start__gte=startdate).filter(time_end__lt=today).order_by("-time_start")
 	
 	for shift in shifts:
@@ -51,12 +49,28 @@ def entertime(request, student_id):
 		shiftEnd = shift.time_end.time()
 		hours = shift.total_time
 		deliverables = shift.deliverables
-		shift_list.append(ShiftStat(shiftDate,hours,shiftStart,shiftEnd,deliverables))
-	#shift_list populated
+		shiftID = shift.id
+		shift_list.append(ShiftStat(shiftDate,hours,shiftStart,shiftEnd,deliverables,shiftID))
 	deliverables = Deliverable.objects.all()
 	context = { 'student' : student, 'deliverables' :deliverables, 'student_id' : student_id, 'shift_list' : shift_list }
 	return render(request, 'timeclock/entertime.html', context)
 
+def editshift(request, shift_id):
+	shifts = Shift.objects.filter(id=shift_id)
+	shift_list = []
+	for shift in shifts:
+		shiftDate = shift.time_start.strftime("%m/%d/%Y")
+		shiftStart = shift.time_start.strftime("%I:%M %p")
+		shiftEnd = shift.time_end.strftime("%I:%M %p")
+		hours = shift.total_time
+		deliverables = shift.deliverables
+		shiftID = shift.id
+		student_id = shift.shift_student.id
+		shift_list.append(ShiftStat(shiftDate,hours,shiftStart,shiftEnd,deliverables,shiftID))
+	shift = shift_list[0]
+	context = {'shift' : shift, 'student_id' : student_id}
+	return render(request, 'timeclock/editshift.html', context)
+	
 def reportingindex(request):
 	semester_list = Semester.objects.all()
 	if request.session.get('semester_id', None):
@@ -109,7 +123,6 @@ def pmo_report(request, semester_name): #PMO Dashboard report generation
 	if weekcnt == 0:
 		weekcnt = 1 #To prevent divide by zero
 	## END WEEK COUNT ##
-	#weeks = se.isocalendar()[1] - sb.isocalendar()[1] #compute the weeks between the two dates using the ISO calendar
 	for project in project_list:
 		avg = Shift.objects.filter(project_id=project.id).aggregate(Sum('total_time')) #What do I divide this by to obtain the actual average?
 		if avg['total_time__sum'] != None: #checking if there's actually numbers to average
@@ -119,11 +132,7 @@ def pmo_report(request, semester_name): #PMO Dashboard report generation
 			ltwkstart = ltwkstart - datetime.timedelta(days=1) #count backwards from a week ago until we find monday
 		ltwkend = ltwkstart + datetime.timedelta(days=6)
 		ltweeks = Shift.objects.filter(project_id=project.id).filter(time_start__gte=ltwkstart).filter(time_end__lt=ltwkend).aggregate(Sum('total_time'))
-		#above line means:											time_start >= ltwkstart				time_end <= ltwkend
-		#NOTE: This is read as project_id=project.id AND time_start >= ltwkstart AND time_end <= ltwkend
-		#I know this is an awful place to put this, but to do an OR criteria, you would do .filter(A, B)
-		#for some reason, >= and <= are not acceptable to django's module.. despite being the scheme for python in general.
-		project_stats.append(ReportStat(project.id,project.project_name,avg,ltweeks)) #Using a new class ReportStat which holds project info and stats together
+		project_stats.append(ReportStat(project.id,project.project_name,avg,ltweeks)) 
 	context = {'project_list' : project_stats, 'page' : 'pmo', 'page' : 'report', 'report' : 'pmo'}
 	return render(request, 'timeclock/pmo_report.html', context)
 
@@ -172,7 +181,6 @@ def pm_report(request, project_name): #PMO Dashboard report generation
 	if weekcnt == 0:
 		weekcnt = 1 #To prevent divide by zero
 	## END WEEK COUNT ##
-	#weeks = se.isocalendar()[1] - sb.isocalendar()[1] #compute the weeks between the two dates using the ISO calendar
 	for student in student_list:
 		avg = Shift.objects.filter(project_id=projectid).filter(shift_student=student.id).aggregate(Sum('total_time')) #gets raw total
 		if avg['total_time__sum'] != None: #checking if there's actually numbers to average
@@ -182,11 +190,7 @@ def pm_report(request, project_name): #PMO Dashboard report generation
 			ltwkstart = ltwkstart - datetime.timedelta(days=1) #count backwards from a week ago until we find monday
 		ltwkend = ltwkstart + datetime.timedelta(days=6)
 		ltweeks = Shift.objects.filter(project_id=projectid).filter(shift_student=student.id).filter(time_start__gte=ltwkstart).filter(time_end__lt=ltwkend).aggregate(Sum('total_time'))
-		#above line means:																			time_start >= ltwkstart				time_end <= ltwkend
-		#NOTE: This is read as project_id=project.id AND shift_student=student.id AND time_start >= ltwkstart AND time_end <= ltwkend
-		#I know this is an awful place to put this, but to do an OR criteria, you would do .filter(A, B)
-		#for some reason, >= and <= are not acceptable to django's module.. despite being the scheme for python in general.
-		student_stats.append(ReportStat(student.id,student.student_name,avg,ltweeks)) #Using a new class ReportStat which holds project info and stats together
+		student_stats.append(ReportStat(student.id,student.student_name,avg,ltweeks))
 	context = {'project_list' : student_stats, 'page' : 'pmo', 'page' : 'report', 'report' : 'pm'}
 	return render(request, 'timeclock/pm_report.html', context)
 
@@ -214,25 +218,10 @@ def submittime(request):
 		starttime = request.GET['starttime']
 		start_string = startdate + " " + starttime
 		submitted_time_start = datetime.datetime.strptime(start_string, '%m/%d/%Y %I:%M %p')
-		#submitted_time_start = timezone.make_aware(submitted_time_start, timezone.get_default_timezone())
 ##### ENDDATE DATETIME OBJECT 
-		#Check for the enddate to be not empty
-	#if request.GET['enddate'] == "":
-		#context = {'error' : "Please enter a end date" }
-		#return render(request, 'timeclock/error.html', context)
-	#else:
-		#if enddate has text in it convert it to a date object
-		#enddate = request.GET['enddate']
-
-	#if request.GET['endtime'] == "":
-		#context = {'error' :"Please enter a end time"}
-		#return render(request, 'timeclock/error.html', context)
-	#else: 
-		#Build the time_start object to put in the database
 		endtime = request.GET['endtime']
 		end_string = startdate + " " + endtime
 		submitted_time_end = datetime.datetime.strptime(end_string, '%m/%d/%Y %I:%M %p')
-		#submitted_time_end = timezone.make_aware(submitted_time_end, timezone.get_default_timezone())
 		submitted_total_time = submitted_time_end - submitted_time_start
 		submitted_total_time = float(submitted_total_time.total_seconds()/3600)
 
@@ -250,9 +239,49 @@ def submittime(request):
 	newshift.save()
 	
 	context = {'student_id':student_id}
-	return redirect('/student/' + str(student_id)) #redirect the user to the appropriate semester page
-	#return render(request, 'timeclock/success.html', context)
+	return redirect('/student/' + str(student_id)) 
 
+def edittime(request):
+	
+
+##### STARTDATE DATETIME OBJECT 
+	#Check for the startdate to be not empty
+	if request.GET['startdateedit'] == "":
+		context = {'error' : "Please enter a date" }
+		return render(request, 'timeclock/error.html', context)
+	else:
+		#if startdate has text in it convert it to a date object
+		startdate = request.GET['startdateedit']
+
+	if request.GET['starttimeedit'] == "":
+		context = {'error' :"Please enter a start time"}
+		return render(request, 'timeclock/error.html', context)
+	else: 
+		#Build the time_start object to put in the database
+		starttime = request.GET['starttimeedit']
+		start_string = startdate + " " + starttime
+		submitted_time_start = datetime.datetime.strptime(start_string, '%m/%d/%Y %I:%M %p')
+##### ENDDATE DATETIME OBJECT 
+		endtime = request.GET['endtimeedit']
+		end_string = startdate + " " + endtime
+		submitted_time_end = datetime.datetime.strptime(end_string, '%m/%d/%Y %I:%M %p')
+		submitted_total_time = submitted_time_end - submitted_time_start
+		submitted_total_time = float(submitted_total_time.total_seconds()/3600)
+
+
+	submitted_deliverables = request.GET['deliverablesedit']
+	shift_id = request.GET['shift_id']
+	student_id = request.GET['student_id']
+
+	shift = Shift.objects.get(id=shift_id)
+	shift.time_start = submitted_time_start
+	shift.time_end=submitted_time_end
+	shift.total_time=submitted_total_time
+	if submitted_deliverables != '':
+		shift.deliverables=submitted_deliverables
+	shift.save()
+	context = {'student_id':student_id}
+	return redirect('/student/' + str(student_id))
 
 
 def reporting(request, semester_name = 0):
@@ -263,7 +292,7 @@ def reporting(request, semester_name = 0):
 		try:
 			semester_name = currentSemester[0].id
 		except: #Today doesn't fall into a semester, take the newest semester instead
-			semesterList = Semester.objects.all.order_by('-id')
+			semesterList = Semester.objects.all().order_by('-id')
 			semester_name = semesterList[0].id
 	else:
 		request.session['semester_id'] = semester_name
@@ -282,9 +311,7 @@ def reporting(request, semester_name = 0):
 		start_date = request.GET['startdate']
 		start_date = datetime.datetime.strptime(start_date, '%m/%d/%Y')
 	except:
-		#start_date = end_date - datetime.timedelta(days=7)
 		start_date = semester.start_date
-
 
 	#Getting some information that I need to do things
 	
@@ -295,19 +322,14 @@ def reporting(request, semester_name = 0):
 	students = Student.objects.filter(semester=sem).order_by("project")
 #This is the object that is used to spit out all of the 
 	shifts = Shift.objects.filter(time_start__gte=start_date, time_start__lte=end_date + datetime.timedelta(days=1)).order_by('project')
-
-
 	simple_report = []
 	hours = []
 	deliverables_list = []
 
-
 #Generates the aggregated table
 	for x in Project.objects.filter(semester=semester_id):
 		z = Shift.objects.filter(project=x, time_start__gte=start_date, time_start__lt=end_date + datetime.timedelta(days=1)).aggregate(Avg('total_time'))
-		hours.append(z.get('total_time__avg'))
-
-
+		hours.append(round(z.get('total_time__avg'),4))
 
 #Generates the detailed table
 	for shift in shifts:
@@ -317,18 +339,10 @@ def reporting(request, semester_name = 0):
 		#For each project name total up the student time in that range
 		if y not in simple_report:
 			simple_report.append(y)
-
-
-#	for x in Project.objects.filter(semester=semester_id).order_by("project_name"):
-#		z = Shift.objects.filter(project=x, time_start__gt=start_date).annotate(dcount=Count("project"))
-#		for shift in z:
-#			if shift.deliverables not in deliverables_list and shift.deliverables != string.whitespace:
-#				deliverables_list.append(shift.deliverables)
-
-
-
-
-
+	if type(start_date) == type(datetime.datetime.now()):
+		start_date = start_date.date()
+	if type(end_date) == type(datetime.datetime.now()):
+		end_date = end_date.date()
 	context = {'students': students, 'start_date': start_date, 'end_date': end_date, 'shifts' : shifts, 'simple_report' : simple_report, 'hours' : hours, 'deliverables_list' : deliverables_list, 'semester_id' : semester_id, 'page' : 'report', 'report' : 'faculty' , 'semester' : semester} 
 	return render(request, 'timeclock/report.html', context)
 

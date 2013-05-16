@@ -32,12 +32,13 @@ class ReportStat:  #Class used by PM and PMO dashboard, allows for the combinati
 		
 class ShiftStat:
 
-	def __init__(self,shiftDate,hours,stTime,edTime,deliverables):
+	def __init__(self,shiftDate,hours,stTime,edTime,deliverables,shiftID):
 		self.shiftDate = shiftDate
 		self.hours = hours
 		self.stTime = stTime
 		self.edTime = edTime
 		self.deliverables = deliverables
+		self.shiftID = shiftID
 	
 	
 		
