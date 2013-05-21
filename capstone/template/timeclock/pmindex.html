@@ -2,7 +2,7 @@
 
 {% block content %}
 
-	{% if semester_list %}
+	{% if list %}
 <!--	<form>
 	<select name="URL" onchange="window.location.href=this.form.URL.options[this.form.URL.selectedIndex].value">
 			<option>Select a semester</option> 
@@ -15,18 +15,20 @@
 		{% endfor %}
 	</select>
 	</form> -->
-<form>
-	<select name="URL" onchange="window.location.href=this.form.URL.options[this.form.URL.selectedIndex].value">
-			<option>Select a semester</option>
-		{% for semester in semester_list %}
-		    <!--- {{semester.id}} --->
-			<!--<option value="/semester_{{semester.semester_name}}"> -->
-			<!-- sets the url equal to the id of the semester that the person selected -->
-			<option value="/reporting/{{semester.id}}" {% if semesterid = semester.id %} selected {% endif %}>
-
-			{{semester.semester_name}} </option>
-		{% endfor %}
-	</select>
+	<form >
+		<select name="URL" onchange="window.location.href=this.form.URL.options[this.form.URL.selectedIndex].value">
+			<option> Select a {{listobj}} </option>
+			{% for obj in list %}
+				{% if listobj == "Project" %}
+				<option value="/pm_report/{{obj.id}}"> 
+				{{obj.project_name}}
+				{% else %}
+				<option value="/pm_report_select/{{obj.id}}"> 
+				{{obj.semester_name}}
+				{% endif %}
+			</option>
+			{% endfor %}
+		</select>
 	</form>
 
 
@@ -36,6 +38,8 @@
 {% else %}
 	<p> No Semesters are available </p>
 {% endif %}
-
+{% if listobj == "Project" %}
+<a href='/clearsemester/pm_report_select'>Click here to choose a different semester</a>
+{% endif %}
 
 {% endblock content %}

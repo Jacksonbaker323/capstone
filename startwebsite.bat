@@ -1,1 +1,2 @@
-C:\Python27\python.exe C:\Python27\capstone-master\manage.py runserver
+C:\Python27\python.exe manage.py runserver
+pause

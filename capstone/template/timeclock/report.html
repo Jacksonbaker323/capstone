@@ -2,34 +2,29 @@
 
 {% block content %}
 
-<h2> Select a different date range </h2>
-
-<form action="/reporting/" method="get" >
+<h2> Faculty Dashboard</h2>
+<br>
+<p>You are currently viewing semester: {{semester.semester_name}} </p>
+<p><a href="/clearsemester/report">Click here to choose a different semester</a></p>
+<p>You can specify a more narrow date range below.</p>
+<form action="/reporting/{{semester.id}}/" method="get" >
 <div class="row-fluid">
-
         <div class="span2"> Start date * : <input type="text" id="datepicker_start" name="startdate"/> </div>
-        
-</div>
-
-<div class="row-fluid">
- 
-        <div class="span2"> End date * : <input type="text" id="datepicker_end" name="enddate" /> </div>
-      
-</div>
-
+        <div class="span2 offset1"> End date * : <input type="text" id="datepicker_end" name="enddate" /> </div>
+		<br>
+<div class="span2 offset1"><input class="btn btn-primary" type="submit" value="Submit"></div>
+		</div>
 <input type="hidden" id="semester_id" name="semester_id" value={{semester_id}}>
-<input class="btn btn-primary" type="submit" value="Submit">
+
 </form>
-
-Report generated with data
-
- From: <b>{{start_date}}</b> To: <b>{{end_date}}</b>
- <br/>
+<p>Report generated with data from: <b>{{start_date}}</b> To: <b>{{end_date}}</b></p>
+<hr>
+ 
  <br/>
 
 
 
-<table class="table span2">
+<table class="table span2 table-hover">
 	<tr>
 		<th>Project Name</th>
 	</tr>
@@ -43,7 +38,7 @@ Report generated with data
 </table>
 
 
-<table class="table span2">
+<table class="table span2 table-hover">
 <tr><th>Average Hours </th></tr>
 {%for hour in hours%}
 <tr>
@@ -68,7 +63,7 @@ Report generated with data
 </table>
 
 -->
-<table class="table">
+<table class="table table-hover">
 
 <tr>
 	<th>Project Name</th><th>Student Name</th><th>Start Time</th><th>End Time</th><th>Total Time (in hours)</th><th>Deliverables</th>
@@ -110,7 +105,7 @@ Report generated with data
 <script>
 
 
-    }
+    
 
     $(function() {
         $( "#datepicker_start" ).datepicker();
